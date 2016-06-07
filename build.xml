@@ -54,6 +54,7 @@
         <unzip src="lib/jericho-html-3.3.jar" dest="temp" />
         <unzip src="lib/closure-compiler.jar" dest="temp" />
         <unzip src="lib/log4j.jar" dest="temp" />
+        <unzip src="lib/automaton.jar" dest="temp" />
         <unzip src="dist/${project}.jar" dest="temp" />
         <jar jarfile="dist/${project}-all.jar" basedir="temp" includes="**/*.*">
             <manifest>
@@ -87,6 +88,7 @@
                                dk.brics.tajs.solver,
                                dk.brics.tajs.unevalizer,
                                dk.brics.tajs.util,
+                               edu.oakland.stringabs,
                                com.google.javascript.jscomp.parsing" 
                 overview="src/overview.html" Package="true" sourcepath="src" destdir="doc" nodeprecated="true" author="true" notree="true" nohelp="true" windowtitle="TAJS" additionalparam="-Xdoclint:none"> 
                 <!-- for Java 8: additionalparam="-Xdoclint:none" -->

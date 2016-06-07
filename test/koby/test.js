@@ -1,3 +1,5 @@
+var z = "h" + "i";dott
+
 function greeting () {
     var x;
     if (Math.random() > .5) {
