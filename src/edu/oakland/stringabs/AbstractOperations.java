@@ -13,10 +13,11 @@ public class AbstractOperations {
     public static Automaton concat(Automaton a1, Automaton a2) {
         return BasicOperations.concatenate(a1, a2);
     }
-    public static Automaton contains(Automaton a, char c) {
-        return BasicOperations.intersection(a,
-                BasicAutomata.makeAnyString()
-                             .concatenate(BasicAutomata.makeChar(c)
-                             .concatenate(BasicAutomata.makeAnyString())));
+    public static Boolean contains(Automaton a, char c) {
+        return !BasicOperations.isEmpty(
+                    BasicOperations.intersection(a,
+                        BasicAutomata.makeAnyString()
+                        .concatenate(BasicAutomata.makeChar(c)
+                        .concatenate(BasicAutomata.makeAnyString()))));
     }
 }

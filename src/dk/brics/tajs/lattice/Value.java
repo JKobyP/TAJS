@@ -21,6 +21,7 @@ import dk.brics.tajs.lattice.ObjectLabel.Kind;
 import dk.brics.tajs.options.Options;
 import dk.brics.tajs.util.AnalysisException;
 import dk.brics.tajs.util.Strings;
+import edu.oakland.stringabs.AbstractString;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
@@ -35,127 +36,66 @@ import static dk.brics.tajs.util.Collections.newSet;
  * Value objects are immutable.
  */
 public final class Value implements Undef, Null, Bool, Num, Str {
-
     private final static int BOOL_TRUE = 0x0000001; // true
-
     private final static int BOOL_FALSE = 0x0000002; // false
-
     private final static int UNDEF = 0x0000004; // undefined
-
     private final static int NULL = 0x0000008; // null
-
     private final static int STR_UINT = 0x0000010; // strings representing numbers that are UInt32
-
     private final static int STR_OTHERNUM = 0x0000020; // strings representing unbounded non-UInt32 numbers, including Infinity, -Infinity, and NaN
-
     private final static int STR_PREFIX = 0x0000040; // strings that consist of a fixed nonempty string followed by identifier-parts
-
     private final static int STR_IDENTIFIER = 0x0000080; // strings that are valid identifiers (excluding reserved names but including "NaN" and "Infinity")
-
     private final static int STR_IDENTIFIERPARTS = 0x0000100; // strings that are valid identifier-parts (i.e. reserved names and identifiers without the start symbol)
-
     private final static int STR_OTHER = 0x0000200; // strings not representing numbers and not identifier-parts
-
     private final static int STR_JSON = 0x0000400; // strings originating from a JSON source
-
     private final static int NUM_NAN = 0x0001000; // NaN
-
     private final static int NUM_INF = 0x0002000; // +/-Infinity
-
     private final static int NUM_UINT = 0x0004000; // UInt32 numbers
-
     private final static int NUM_OTHER = 0x0008000; // numbers that are not UInt32, not NaN, and not +/-Infinity
-
     private final static int ATTR_DONTENUM = 0x0010000; // [[DontEnum]] property
-
     private final static int ATTR_NOTDONTENUM = 0x0020000; // not [[DontEnum]] property
-
     private final static int ATTR_READONLY = 0x0040000; // [[ReadOnly]] property
-
     private final static int ATTR_NOTREADONLY = 0x0080000; // not [[ReadOnly]] property
-
     private final static int ATTR_DONTDELETE = 0x0100000; // [[DontDelete]] property
-
     private final static int ATTR_NOTDONTDELETE = 0x0200000; // not [[DontDelete]] property
-
     private final static int MODIFIED = 0x1000000; // maybe modified property (since function entry)
-
     private final static int ABSENT = 0x2000000; // maybe absent property
-
     private final static int PRESENT = 0x4000000; // maybe present property, only used if var!=null
-
     private final static int UNKNOWN = 0x8000000; // unknown (lazy propagation)
-
     private final static int EXTENDEDSCOPE = 0x10000000; // for extended scope registers (for-in and finally blocks)
-
     private final static int BOOL = BOOL_TRUE | BOOL_FALSE;
-
     private final static int STR = STR_UINT | STR_OTHERNUM | STR_PREFIX | STR_IDENTIFIER | STR_IDENTIFIERPARTS | STR_OTHER | STR_JSON;
-
     private final static int NUM = NUM_NAN | NUM_INF | NUM_UINT | NUM_OTHER;
-
     private final static int ATTR_DONTENUM_ANY = ATTR_DONTENUM | ATTR_NOTDONTENUM;
-
     private final static int ATTR_READONLY_ANY = ATTR_READONLY | ATTR_NOTREADONLY;
-
     private final static int ATTR_DONTDELETE_ANY = ATTR_DONTDELETE | ATTR_NOTDONTDELETE;
-
     private final static int ATTR = ATTR_DONTENUM_ANY | ATTR_READONLY_ANY | ATTR_DONTDELETE_ANY;
-
     private final static int PROPERTYDATA = ATTR | MODIFIED;
-
     private final static int PRIMITIVE = UNDEF | NULL | BOOL | NUM | STR;
-
     private static Map<Value, WeakReference<Value>> value_cache;
-
     private static int value_cache_hits;
-
     private static int value_cache_misses;
-
     private static Map<Set<ObjectLabel>, WeakReference<Set<ObjectLabel>>> objset_cache;
-
     private static int objset_cache_hits;
-
     private static int objset_cache_misses;
-
     private static Value theNone;
-
     private static Value theNoneModified;
-
     private static Value theUndef;
-
     private static Value theNull;
-
     private static Value theBoolTrue;
-
     private static Value theBoolFalse;
-
     private static Value theBoolAny;
-
     private static Value theStrAny;
-
     private static Value theStrUInt;
-
     private static Value theStrNotUInt;
-
     private static Value theJSONStr;
-
     private static Value theNumAny;
-
     private static Value theNumUInt;
-
     private static Value theNumNotNaNInf;
-
     private static Value theNumOther;
-
     private static Value theNumNaN;
-
     private static Value theNumInf;
-
     private static Value theAbsent;
-
     private static Value theAbsentModified;
-
     private static Value theUnknown;
 
     /*
@@ -177,7 +117,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
      * !(var != null && ((flags & PRIMITIVE) != 0 || str != null || num != null || !object_labels.isEmpty()))
      * &&
      * !((flags & PRESENT) != 0 && var == null)
-     * 
+     *
      * For the String facet, note that the various categories are not all disjoint.
      * Also, at most one of STR_PREFIX, STR_IDENTIFIER, and STR_IDENTIFIERPARTS can be set,
      * although STR_IDENTIFIERPARTS subsumes the other two (and STR_UINT).
@@ -196,7 +136,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     /**
      * Constant string or prefix.
      */
-    private String str;
+    private AbstractString str;
 
     /**
      * Property reference for polymorphic value.
@@ -303,7 +243,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 msg = "PRESENT set for non-polymorphic value";
             if (msg != null)
                 throw new AnalysisException("Invalid value (0x" + Integer.toHexString(v.flags) + ","
-                        + Strings.escape(v.str) + "," + v.num + "," + v.object_labels + "), " + msg);
+                        + Strings.escape(v.str.stringValue()) + "," + v.num + "," + v.object_labels + "), " + msg);
             if (Options.get().isPolymorphicDisabled() && v.isPolymorphic())
                 throw new AnalysisException("Unexpected polymorphic value");
         }
@@ -342,6 +282,8 @@ public final class Value implements Undef, Null, Bool, Num, Str {
             return Collections.unmodifiableSet(res);
         return res;
     }
+
+    //getters, setters, object attributes
 
     /**
      * Returns the value cache size.
@@ -1262,12 +1204,12 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 if (isMaybeStrPrefixedIdentifierParts()) {
                     if (any)
                         b.append('|');
-                    b.append("PrefixIdentPartsStr[").append(Strings.escape(str)).append(']');
+                    b.append("PrefixIdentPartsStr[").append(Strings.escape(str.stringValue())).append(']');
                     any = true;
                 } else if (str != null) {
                     if (any)
                         b.append('|');
-                    b.append('"').append(Strings.escape(str)).append('"');
+                    b.append('"').append(Strings.escape(str.stringValue())).append('"');
                     any = true;
                 }
             }
@@ -1383,6 +1325,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     public static Value makeUndef() {
         return theUndef;
     }
+
 
     /* The Null facet */
 
@@ -1965,14 +1908,14 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public boolean isMaybeStrSomeUInt() {
         checkNotPolymorphicOrUnknown();
-        return (flags & (STR_UINT | STR_IDENTIFIERPARTS)) != 0 || ((flags & STR_PREFIX) != 0 && Strings.isArrayIndex(str));
+        return (flags & (STR_UINT | STR_IDENTIFIERPARTS)) != 0 || ((flags & STR_PREFIX) != 0 && Strings.isArrayIndex(str.stringValue()));
     }
 
     @Override
     public boolean isMaybeStrSomeNonUInt() {
         checkNotPolymorphicOrUnknown();
         return (flags & (STR_OTHERNUM | STR_PREFIX | STR_IDENTIFIER | STR_IDENTIFIERPARTS | STR_OTHER | STR_JSON)) != 0
-                || (str != null && !Strings.isArrayIndex(str));
+                || (str != null && !Strings.isArrayIndex(str.stringValue()));
     }
 
     @Override
@@ -2021,14 +1964,14 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     public boolean isStrIdentifierOrIdentifierParts() {
         checkNotPolymorphicOrUnknown();
         return ((flags & PRIMITIVE) == STR_IDENTIFIER || (flags & PRIMITIVE) == STR_IDENTIFIERPARTS
-                || (str != null && Strings.isIdentifierParts(str))) && num == null && object_labels == null;
+                || (str != null && Strings.isIdentifierParts(str.stringValue()))) && num == null && object_labels == null;
     }
 
     @Override
     public boolean isStrIdentifier() {
         checkNotPolymorphicOrUnknown();
         return ((flags & PRIMITIVE) == STR_IDENTIFIER
-                || (str != null && Strings.isIdentifier(str))) && num == null && object_labels == null;
+                || (str != null && Strings.isIdentifier(str.stringValue()))) && num == null && object_labels == null;
     }
 
     @Override
@@ -2054,7 +1997,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         checkNotPolymorphicOrUnknown();
         if (isMaybeStrPrefixedIdentifierParts())
             return null;
-        return str;
+        return str.stringValue();
     }
 
     @Override
@@ -2062,7 +2005,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         checkNotPolymorphicOrUnknown();
         if (!isMaybeStrPrefixedIdentifierParts())
             return null;
-        return str;
+        return str.stringValue();
     }
 
     @Override
@@ -2161,7 +2104,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
             return this;
         Value r = new Value(this);
         Value tmp = new Value();
-        tmp.str = s;
+        tmp.str = new AbstractString(s);
         r.joinSingleStringOrPrefixString(tmp);
         return canonicalize(r);
     }
@@ -2174,7 +2117,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         Value r = new Value(this);
         Value tmp = new Value();
         tmp.flags |= STR_PREFIX;
-        tmp.str = s;
+        tmp.str = new AbstractString(s);
         r.joinSingleStringOrPrefixString(tmp);
         return canonicalize(r);
     }
@@ -2438,6 +2381,13 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         return canonicalize(r);
     }
 
+    @Override
+    public Value concat(Str s) {
+        str = str+s.getStr();
+        return this;
+    }
+
+//obect labels
     /* object labels */
 
     /**
