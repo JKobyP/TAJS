@@ -1993,11 +1993,11 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     }
 
     @Override
-    public String getStr() {
+    public AbstractString getStr() {
         checkNotPolymorphicOrUnknown();
         if (isMaybeStrPrefixedIdentifierParts())
             return null;
-        return str.stringValue();
+        return str;
     }
 
     @Override
@@ -2182,7 +2182,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 if (this_is_prefix)
                     // this is a prefix string, v is a single/prefix string
                     if (v.str.startsWith(str)) {
-                        if (!Strings.isIdentifierParts(v.str.substring(str.length()))) {
+                        if (!Strings.isIdentifierParts(v.str.substring(str.length()).stringValue())) {
                             // last part of v does not consist of identifier-parts, so switch to fuzzy
                             switch_both_to_fuzzy = true;
                         } // otherwise, v is subsumed by this, so do nothing
@@ -2191,7 +2191,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                         for (i = 0; i < str.length() && i < v.str.length(); i++)
                             if (str.charAt(i) != v.str.charAt(i))
                                 break;
-                        if (i > 0 && Strings.isIdentifierParts(str.substring(i)) && Strings.isIdentifierParts(v.str.substring(i))) {
+                        if (i > 0 && Strings.isIdentifierParts(str.substring(i).stringValue()) && Strings.isIdentifierParts(v.str.substring(i).stringValue())) {
                             // nonempty common prefix, tails are identifier-parts, so truncate this
                             str = str.substring(0, i);
                             modified = true;
@@ -2202,8 +2202,8 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                     }
                 else if (v_is_prefix) {
                     // this is a single string, v is a prefix string
-                    if (str.startsWith(v.str)) {
-                        if (!Strings.isIdentifierParts(str.substring(v.str.length()))) {
+                    if (str.startsWith(v.str.stringValue())) {
+                        if (!Strings.isIdentifierParts(str.substring(v.str.length()).stringValue())) {
                             // last part of this does not consist of identifier-parts, so switch to fuzzy
                             switch_both_to_fuzzy = true;
                         } else {
@@ -2217,7 +2217,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                         for (i = 0; i < str.length() && i < v.str.length(); i++)
                             if (str.charAt(i) != v.str.charAt(i))
                                 break;
-                        if (i > 0 && Strings.isIdentifierParts(str.substring(i)) && Strings.isIdentifierParts(v.str.substring(i))) {
+                        if (i > 0 && Strings.isIdentifierParts(str.substring(i).stringValue()) && Strings.isIdentifierParts(v.str.substring(i).stringValue())) {
                             // nonempty common prefix, tails are identifier-parts
                             str = str.substring(0, i);
                             flags |= STR_PREFIX;
@@ -2238,7 +2238,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 // this is a single/prefix string, v is not a single/prefix string
                 if ((v.flags & STR) != 0) {
                     // this is a single/prefix string, v is non-prefix fuzzy, so switch this to fuzzy
-                    String oldstr = str;
+                    String oldstr = str.stringValue();
                     str = null;
                     flags &= ~STR_PREFIX;
                     joinSingleStringOrPrefixStringAsFuzzyNonPrefix(oldstr, this_is_prefix);
@@ -2254,14 +2254,14 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 modified = true;
             } else {
                 // this is a non-prefix fuzzy, v is a single/prefix string
-                modified = joinSingleStringOrPrefixStringAsFuzzyNonPrefix(v.str, v_is_prefix);
+                modified = joinSingleStringOrPrefixStringAsFuzzyNonPrefix(v.str.stringValue(), v_is_prefix);
             }
         } // otherwise, neither is a single/prefix string so do nothing
         if (switch_both_to_fuzzy) {
-            String oldstr = str;
+            String oldstr = str.stringValue();
             str = null;
             flags &= ~STR_PREFIX;
-            joinSingleStringOrPrefixStringAsFuzzyNonPrefix(v.str, v_is_prefix);
+            joinSingleStringOrPrefixStringAsFuzzyNonPrefix(v.str.stringValue(), v_is_prefix);
             joinSingleStringOrPrefixStringAsFuzzyNonPrefix(oldstr, this_is_prefix);
             modified = true;
         }
@@ -2275,7 +2275,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
             return true; // TODO: check that the string is really a JSON string? (true is a sound approximation)
         if (str != null) {
             if ((flags & STR_PREFIX) != 0)
-                return s.startsWith(str) && Strings.isIdentifierParts(s.substring(str.length())); // e.g. s="qwerty" matches this="qw"+idparts
+                return s.startsWith(str.stringValue()) && Strings.isIdentifierParts(s.substring(str.length())); // e.g. s="qwerty" matches this="qw"+idparts
             else
                 return s.equals(str);
         } else if (Strings.isArrayIndex(s))
@@ -2349,7 +2349,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
      */
     public static Value makeStr(String s) {
         Value r = new Value();
-        r.str = s;
+        r.str = new AbstractString(s);
         return canonicalize(r);
     }
 
@@ -2359,7 +2359,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
      */
     public static Str makeTemporaryStr(String s) {
         Value r = new Value();
-        r.str = s;
+        r.str = new AbstractString(s);
         return r;
     }
 
@@ -2381,9 +2381,8 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         return canonicalize(r);
     }
 
-    @Override
     public Value concat(Str s) {
-        str = str+s.getStr();
+        str = str.concat(s.getStr());
         return this;
     }
 

@@ -16,6 +16,8 @@
 
 package dk.brics.tajs.lattice;
 
+import edu.oakland.stringabs.AbstractString;
+
 /**
  * 'String' facet for abstract values.
  */
@@ -109,7 +111,7 @@ public interface Str {
     /**
      * Returns the singleton string value, or null if definitely not a singleton string.
      */
-    String getStr();
+    AbstractString getStr();
 
     /**
      * Returns the prefix value, or null if definitely not a fixed nonempty string followed by identifier parts.
