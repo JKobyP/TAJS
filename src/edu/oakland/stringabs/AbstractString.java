@@ -3,6 +3,8 @@ package edu.oakland.stringabs;
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.BasicAutomata;
 import dk.brics.automaton.BasicOperations;
+import dk.brics.automaton.RegExp;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Created by koby on 6/9/2016.
@@ -11,6 +13,9 @@ public class AbstractString {
     private Automaton dfa;
     private static AbstractString anyString;
     private static AbstractString uIntString;
+    private static AbstractString otherNumString;
+    private static AbstractString anyNumberString;
+    private static AbstractString empty;
 
     public AbstractString(String s){
         dfa = AbstractOperations.newStr(s);
@@ -20,7 +25,10 @@ public class AbstractString {
     }
 
     public static AbstractString newEmptyAbstractString(){
-        return new AbstractString("");
+        if (empty == null) {
+            empty = new AbstractString(BasicAutomata.makeEmpty());
+        }
+        return empty;
     }
 
     public static AbstractString anyString(){
@@ -37,6 +45,25 @@ public class AbstractString {
                     .intersection(BasicAutomata.makeMaxInteger(uintsize)));
         }
         return uIntString;
+    }
+
+    public static AbstractString otherNumString() {
+        if(otherNumString == null) {
+            otherNumString = getAnyNumberString().intersect(uIntString().getComplement());
+        }
+        return otherNumString;
+    }
+
+    public static AbstractString getAnyNumberString() {
+        if(anyNumberString == null) {
+            anyNumberString = new AbstractString(new RegExp("\\-?(([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+][0-9]+)?|Infinity)|NaN").toAutomaton());
+        }
+        return anyNumberString;
+    }
+
+
+    private AbstractString intersect(AbstractString a){
+        return new AbstractString(this.dfa.intersection(a.dfa));
     }
 
     /**
@@ -90,9 +117,14 @@ public class AbstractString {
 
     public int length() {return dfa.getNumberOfStates();}
 
-    public boolean startsWith(String s) { return true;}
-    public boolean startsWith(AbstractString s) { return true;}
+    public boolean startsWith(AbstractString s) {
+        throw new NotImplementedException();
+    }
     public char charAt(int i) { return 0;}
-    public AbstractString substring(int b, int e){return newEmptyAbstractString();}
-    public AbstractString substring(int b){return newEmptyAbstractString();}
+    public AbstractString substring(int b, int e){
+        throw new NotImplementedException();
+    }
+    public AbstractString substring(int b){
+        throw new NotImplementedException();
+    }
 }

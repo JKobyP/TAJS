@@ -1978,7 +1978,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public boolean isMaybeStrOtherNum() {
         checkNotPolymorphicOrUnknown();
-        return (flags & STR_OTHERNUM) != 0;
+        return str != null && str.hasIntersection(AbstractString.otherNumString());
     }
 
     @Override
@@ -2034,7 +2034,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public boolean isMaybeStrOnlyUInt() {
         checkNotPolymorphicOrUnknown();
-        return (flags & STR) == STR_UINT;
+        return str != null && str.isLessThan(AbstractString.uIntString());
     }
 
     @Override
