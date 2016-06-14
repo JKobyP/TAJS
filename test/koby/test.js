@@ -1,4 +1,4 @@
-var z = "h" + "i";dott
+var z = "h" + "i";
 
 function greeting () {
     var x;

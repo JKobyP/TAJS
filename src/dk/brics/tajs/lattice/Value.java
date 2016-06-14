@@ -21,6 +21,7 @@ import dk.brics.tajs.lattice.ObjectLabel.Kind;
 import dk.brics.tajs.options.Options;
 import dk.brics.tajs.util.AnalysisException;
 import dk.brics.tajs.util.Strings;
+import edu.oakland.stringabs.AbstractString;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
@@ -196,7 +197,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     /**
      * Constant string or prefix.
      */
-    private String str;
+    private AbstractString str;
 
     /**
      * Property reference for polymorphic value.
@@ -303,7 +304,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 msg = "PRESENT set for non-polymorphic value";
             if (msg != null)
                 throw new AnalysisException("Invalid value (0x" + Integer.toHexString(v.flags) + ","
-                        + Strings.escape(v.str) + "," + v.num + "," + v.object_labels + "), " + msg);
+                        + Strings.escape(v.getStr()) + "," + v.num + "," + v.object_labels + "), " + msg);
             if (Options.get().isPolymorphicDisabled() && v.isPolymorphic())
                 throw new AnalysisException("Unexpected polymorphic value");
         }
@@ -1262,12 +1263,12 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 if (isMaybeStrPrefixedIdentifierParts()) {
                     if (any)
                         b.append('|');
-                    b.append("PrefixIdentPartsStr[").append(Strings.escape(str)).append(']');
+                    b.append("PrefixIdentPartsStr[").append(Strings.escape(getStr())).append(']');
                     any = true;
                 } else if (str != null) {
                     if (any)
                         b.append('|');
-                    b.append('"').append(Strings.escape(str)).append('"');
+                    b.append('"').append(Strings.escape(getStr())).append('"');
                     any = true;
                 }
             }
@@ -1949,30 +1950,29 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     }
 
     /* the Str facet */
-
+    // TODO: These nullchecks are sketchy and might not lead to correctness
     @Override
     public boolean isMaybeAnyStr() {
         checkNotPolymorphicOrUnknown();
-        return (flags & (STR_UINT | STR_OTHERNUM | STR_IDENTIFIERPARTS | STR_OTHER)) == (STR_UINT | STR_OTHERNUM | STR_IDENTIFIERPARTS | STR_OTHER);
+        return str != null && str.equals(AbstractString.anyString());
     }
 
     @Override
     public boolean isMaybeStrUInt() {
         checkNotPolymorphicOrUnknown();
-        return (flags & STR_UINT) != 0;
+        return str != null && str.equals(AbstractString.uIntString());
     }
 
     @Override
     public boolean isMaybeStrSomeUInt() {
         checkNotPolymorphicOrUnknown();
-        return (flags & (STR_UINT | STR_IDENTIFIERPARTS)) != 0 || ((flags & STR_PREFIX) != 0 && Strings.isArrayIndex(str));
+        return str != null && str.hasIntersection(AbstractString.uIntString());
     }
 
     @Override
     public boolean isMaybeStrSomeNonUInt() {
         checkNotPolymorphicOrUnknown();
-        return (flags & (STR_OTHERNUM | STR_PREFIX | STR_IDENTIFIER | STR_IDENTIFIERPARTS | STR_OTHER | STR_JSON)) != 0
-                || (str != null && !Strings.isArrayIndex(str));
+        return str != null && str.hasIntersection(AbstractString.uIntString().getComplement());
     }
 
     @Override
@@ -2021,14 +2021,14 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     public boolean isStrIdentifierOrIdentifierParts() {
         checkNotPolymorphicOrUnknown();
         return ((flags & PRIMITIVE) == STR_IDENTIFIER || (flags & PRIMITIVE) == STR_IDENTIFIERPARTS
-                || (str != null && Strings.isIdentifierParts(str))) && num == null && object_labels == null;
+                || (str != null && Strings.isIdentifierParts(getStr()))) && num == null && object_labels == null;
     }
 
     @Override
     public boolean isStrIdentifier() {
         checkNotPolymorphicOrUnknown();
         return ((flags & PRIMITIVE) == STR_IDENTIFIER
-                || (str != null && Strings.isIdentifier(str))) && num == null && object_labels == null;
+                || (str != null && Strings.isIdentifier(getStr()))) && num == null && object_labels == null;
     }
 
     @Override
@@ -2054,7 +2054,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         checkNotPolymorphicOrUnknown();
         if (isMaybeStrPrefixedIdentifierParts())
             return null;
-        return str;
+        return str.stringValue();
     }
 
     @Override
@@ -2062,7 +2062,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         checkNotPolymorphicOrUnknown();
         if (!isMaybeStrPrefixedIdentifierParts())
             return null;
-        return str;
+        return str.stringValue();
     }
 
     @Override
@@ -2161,7 +2161,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
             return this;
         Value r = new Value(this);
         Value tmp = new Value();
-        tmp.str = s;
+        tmp.str = new AbstractString(s);
         r.joinSingleStringOrPrefixString(tmp);
         return canonicalize(r);
     }
@@ -2174,7 +2174,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         Value r = new Value(this);
         Value tmp = new Value();
         tmp.flags |= STR_PREFIX;
-        tmp.str = s;
+        tmp.str = new AbstractString(s);
         r.joinSingleStringOrPrefixString(tmp);
         return canonicalize(r);
     }
@@ -2239,7 +2239,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 if (this_is_prefix)
                     // this is a prefix string, v is a single/prefix string
                     if (v.str.startsWith(str)) {
-                        if (!Strings.isIdentifierParts(v.str.substring(str.length()))) {
+                        if (!Strings.isIdentifierParts(v.str.substring(str.length()).stringValue())) {
                             // last part of v does not consist of identifier-parts, so switch to fuzzy
                             switch_both_to_fuzzy = true;
                         } // otherwise, v is subsumed by this, so do nothing
@@ -2248,7 +2248,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                         for (i = 0; i < str.length() && i < v.str.length(); i++)
                             if (str.charAt(i) != v.str.charAt(i))
                                 break;
-                        if (i > 0 && Strings.isIdentifierParts(str.substring(i)) && Strings.isIdentifierParts(v.str.substring(i))) {
+                        if (i > 0 && Strings.isIdentifierParts(str.substring(i).stringValue()) && Strings.isIdentifierParts(v.str.substring(i).stringValue())) {
                             // nonempty common prefix, tails are identifier-parts, so truncate this
                             str = str.substring(0, i);
                             modified = true;
@@ -2260,7 +2260,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 else if (v_is_prefix) {
                     // this is a single string, v is a prefix string
                     if (str.startsWith(v.str)) {
-                        if (!Strings.isIdentifierParts(str.substring(v.str.length()))) {
+                        if (!Strings.isIdentifierParts(str.substring(v.str.length()).stringValue())) {
                             // last part of this does not consist of identifier-parts, so switch to fuzzy
                             switch_both_to_fuzzy = true;
                         } else {
@@ -2274,7 +2274,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                         for (i = 0; i < str.length() && i < v.str.length(); i++)
                             if (str.charAt(i) != v.str.charAt(i))
                                 break;
-                        if (i > 0 && Strings.isIdentifierParts(str.substring(i)) && Strings.isIdentifierParts(v.str.substring(i))) {
+                        if (i > 0 && Strings.isIdentifierParts(str.substring(i).stringValue()) && Strings.isIdentifierParts(v.str.substring(i).stringValue())) {
                             // nonempty common prefix, tails are identifier-parts
                             str = str.substring(0, i);
                             flags |= STR_PREFIX;
@@ -2295,7 +2295,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 // this is a single/prefix string, v is not a single/prefix string
                 if ((v.flags & STR) != 0) {
                     // this is a single/prefix string, v is non-prefix fuzzy, so switch this to fuzzy
-                    String oldstr = str;
+                    String oldstr = getStr();
                     str = null;
                     flags &= ~STR_PREFIX;
                     joinSingleStringOrPrefixStringAsFuzzyNonPrefix(oldstr, this_is_prefix);
@@ -2311,14 +2311,14 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 modified = true;
             } else {
                 // this is a non-prefix fuzzy, v is a single/prefix string
-                modified = joinSingleStringOrPrefixStringAsFuzzyNonPrefix(v.str, v_is_prefix);
+                modified = joinSingleStringOrPrefixStringAsFuzzyNonPrefix(v.str.stringValue(), v_is_prefix);
             }
         } // otherwise, neither is a single/prefix string so do nothing
         if (switch_both_to_fuzzy) {
-            String oldstr = str;
+            String oldstr = str.stringValue();
             str = null;
             flags &= ~STR_PREFIX;
-            joinSingleStringOrPrefixStringAsFuzzyNonPrefix(v.str, v_is_prefix);
+            joinSingleStringOrPrefixStringAsFuzzyNonPrefix(v.str.stringValue(), v_is_prefix);
             joinSingleStringOrPrefixStringAsFuzzyNonPrefix(oldstr, this_is_prefix);
             modified = true;
         }
@@ -2332,9 +2332,9 @@ public final class Value implements Undef, Null, Bool, Num, Str {
             return true; // TODO: check that the string is really a JSON string? (true is a sound approximation)
         if (str != null) {
             if ((flags & STR_PREFIX) != 0)
-                return s.startsWith(str) && Strings.isIdentifierParts(s.substring(str.length())); // e.g. s="qwerty" matches this="qw"+idparts
+                return s.startsWith(str.stringValue()) && Strings.isIdentifierParts(s.substring(str.length())); // e.g. s="qwerty" matches this="qw"+idparts
             else
-                return s.equals(str);
+                return s.equals(getStr());
         } else if (Strings.isArrayIndex(s))
             return (flags & (STR_UINT | STR_IDENTIFIERPARTS)) != 0;
         else if (s.equals("Infinity") || s.equals("NaN"))
@@ -2351,19 +2351,19 @@ public final class Value implements Undef, Null, Bool, Num, Str {
 
     private static Value reallyMakeAnyStr() {
         Value r = new Value();
-        r.flags |= STR_UINT | STR_OTHERNUM | STR_IDENTIFIERPARTS | STR_OTHER;
+        r.str = AbstractString.anyString();
         return canonicalize(r);
     }
 
     private static Value reallyMakeAnyStrUInt() {
         Value r = new Value();
-        r.flags |= STR_UINT;
+        r.str = AbstractString.uIntString();
         return canonicalize(r);
     }
 
     private static Value reallyMakeAnyStrNotUInt() {
         Value r = new Value();
-        r.flags |= STR_IDENTIFIER | STR_OTHER | STR_OTHERNUM;
+        r.str = AbstractString.uIntString().getComplement();
         return canonicalize(r);
     }
 
@@ -2406,7 +2406,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
      */
     public static Value makeStr(String s) {
         Value r = new Value();
-        r.str = s;
+        r.str = new AbstractString(s);
         return canonicalize(r);
     }
 
@@ -2416,7 +2416,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
      */
     public static Str makeTemporaryStr(String s) {
         Value r = new Value();
-        r.str = s;
+        r.str = new AbstractString(s);
         return r;
     }
 
