@@ -16,23 +16,21 @@
 
 package dk.brics.tajs;
 
+import dk.brics.automaton.Automaton;
 import dk.brics.tajs.analysis.Analysis;
 import dk.brics.tajs.analysis.StaticDeterminacyContextSensitivityStrategy;
-import dk.brics.tajs.flowgraph.FlowGraph;
-import dk.brics.tajs.flowgraph.HostEnvSources;
-import dk.brics.tajs.flowgraph.JavaScriptSource;
+import dk.brics.tajs.flowgraph.*;
 import dk.brics.tajs.flowgraph.JavaScriptSource.Kind;
 import dk.brics.tajs.htmlparser.HTMLParser;
 import dk.brics.tajs.js2flowgraph.FlowGraphBuilder;
-import dk.brics.tajs.lattice.Obj;
-import dk.brics.tajs.lattice.ScopeChain;
-import dk.brics.tajs.lattice.State;
-import dk.brics.tajs.lattice.Value;
+import dk.brics.tajs.lattice.*;
 import dk.brics.tajs.monitoring.AnalysisPhase;
 import dk.brics.tajs.monitoring.IAnalysisMonitoring;
 import dk.brics.tajs.monitoring.Monitoring;
+import dk.brics.tajs.monitoring.TypeCollector;
 import dk.brics.tajs.options.ExperimentalOptions;
 import dk.brics.tajs.options.Options;
+import dk.brics.tajs.solver.Message;
 import dk.brics.tajs.solver.SolverSynchronizer;
 import dk.brics.tajs.util.AnalysisException;
 import dk.brics.tajs.util.Loader;
@@ -41,15 +39,19 @@ import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import dk.brics.tajs.lattice.State;
+
+import java.io.*;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import static dk.brics.tajs.util.Collections.newList;
+import static dk.brics.tajs.util.Collections.newSet;
+
+//-------------------------------------------------
+import edu.oakland.stringabs.*;
+import org.apache.tools.ant.filters.StringInputStream;
+//-------------------------------------------------
 
 /**
  * Main class for the TAJS program analysis.
@@ -58,7 +60,7 @@ public class Main {
 
     private static Logger log = Logger.getLogger(Main.class);
 
-    private Main() {
+    private Main() {//empty main
     }
 
     /**
@@ -67,17 +69,59 @@ public class Main {
      * Terminates with System.exit.
      */
     public static void main(String[] args) {
-        try {
-            initLogging();
-            Analysis a = init(args, null);
-            if (a == null)
-                System.exit(-1);
-            run(a);
-            System.exit(0);
-        } catch (AnalysisException e) {
-            e.printStackTrace();
-            System.exit(-2);
-        }
+
+//        String callgraph = "-callgraph"; // output call graph as text and in a file `out/callgraph.dot` (process with [Graphviz dot](http://www.graphviz.org/))
+//        String collect_variable_info = "-collect-variable-info"; // output type and line information about all variables
+//        String debug = "-debug"; // output extensive internal information during the analysis
+//        String flowgraph = "-flowgraph"; //output the initial and final flow graphs (TAJS's intermediate representation) as text and to `out/flowgraphs/`
+//                                        // (in Graphviz dot format, with a file for each function and for the complete program)
+//        String low_severity = "-low-severity"; // enable many more type warnings
+//        String quiet = "-quiet"; // only print results, not information about analysis progress
+//        String states = "-states"; // output intermediate abstract states during the analysis
+//        String uneval = "-uneval"; // enable the Unevalizer for on-the-fly translation of `eval` calls, as described in
+//                                    // 'Remedying the Eval that Men Do', ISSTA 2012
+//        String determinacy = "-determinacy"; // enable the techniques described in 'Determinacy in Static Analysis of jQuery', OOPSLA 2014
+//        //***************** file path
+//        String path = "C:\\Users\\reu-9\\Documents\\TAJS-master\\test\\chris\\inheritance_paper.js";
+//        String[] file = {path, "-statistics"};
+//        /**************************/
+//
+//        try {
+//            initLogging();
+//
+//            Analysis a = init(file, null);
+//
+//            if (a == null)
+//                System.exit(-1);
+//            run(a);
+//
+//            // Kasdl -- test The analysis ***********************************************************************************************************>>>>>>>>
+//            //testAnalysis(a);
+//
+//            //ToInterval intervale = new ToInterval();
+//           // String res = intervale.printList();
+//           // System.out.println("^^^^^^^^^^^^^^^^^^^^\n\n\n" + res);
+//           // ToInterval.make();
+//
+//            System.exit(0);
+//        } catch (AnalysisException e) {
+//            e.printStackTrace();
+//            System.exit(-2);
+//        }
+////        catch (FileNotFoundException e) {
+////            e.printStackTrace();
+////        } catch (UnsupportedEncodingException e) {
+////            e.printStackTrace();
+////        }
+//        AbstractString abs = AbstractString("hola");
+        AbstractString emp = AbstractString.newEmptyAbstractString();
+        AbstractString any = AbstractString.anyString();
+
+//        System.out.print(abs);
+
+        System.out.println(emp);
+        System.out.print(any);
+
     }
 
     /**
@@ -108,10 +152,20 @@ public class Main {
      * @throws AnalysisException if internal error
      */
     public static Analysis init(String[] args, IAnalysisMonitoring monitoring, SolverSynchronizer sync) throws AnalysisException {
-        boolean show_usage = false;
+//        System.out.println("=========== KasdL ===========");
+//        for (int index = 0; index < args.length; ++index)
+//		        {
+//		            System.out.println("args[" + index + "]: " + args[index]);
+//		        }
+
+		boolean show_usage = false;
         Options.parse(args);
         Options.get().checkConsistency();
         List<String> files = Options.get().getArguments();
+
+//        "=========== KasdL ==========="
+//        System.out.println(Options.get().getArguments());
+//        System.exit(0);
 
         Analysis analysis = new Analysis(monitoring, sync);
 
@@ -119,6 +173,7 @@ public class Main {
             System.out.println("No source files");
             show_usage = true;
         }
+        //show_usage = true;
         if (show_usage) {
             System.out.println("TAJS - Type Analyzer for JavaScript");
             System.out.println("Copyright 2009-2015 Aarhus University\n");
@@ -170,6 +225,12 @@ public class Main {
                 }
             }
             fg = builder.close();
+            //********** @ this point FlowGraph is built kasdl*************
+
+            //************ kasdl - testing the fg
+            //test(fg);
+            // **********************
+
         } catch (IOException e) {
             log.error("Unable to parse " + e.getMessage());
             return null;
@@ -184,20 +245,21 @@ public class Main {
 
         monitoring.setFlowgraph(analysis.getSolver().getFlowGraph());
         monitoring.setCallGraph(analysis.getSolver().getAnalysisLatticeElement().getCallGraph());
-
         return analysis;
     }
+
 
     /**
      * Configures log4j.
      */
     public static void initLogging() {
-        Properties prop = new Properties();
-        prop.put("log4j.rootLogger", "INFO, tajs"); // DEBUG / INFO / WARN / ERROR 
+        Properties prop = new Properties(); // This is java.util.Properties
+        prop.put("log4j.rootLogger", "INFO, tajs"); // DEBUG / INFO / WARN / ERROR
         prop.put("log4j.appender.tajs", "org.apache.log4j.ConsoleAppender");
         prop.put("log4j.appender.tajs.layout", "org.apache.log4j.PatternLayout");
         prop.put("log4j.appender.tajs.layout.ConversionPattern", "%m%n");
         PropertyConfigurator.configure(prop);
+        //System.out.println("Properties print"+prop);
     }
 
     /**
@@ -284,4 +346,87 @@ public class Main {
                 throw new RuntimeException("Unhandled phase enum: " + phase);
         }
     }
+
+
+//    // Kasdl -- My Functions  ***********************************************************************************************************>>>>>>>>
+//
+//    /**
+//     * TO test the analysis object.
+//     * @param m the Analysis Object
+//     * @throws FileNotFoundException
+//     * @throws UnsupportedEncodingException
+//     */
+//    private static void testAnalysis(Analysis m) throws FileNotFoundException, UnsupportedEncodingException {
+//
+//        IAnalysisMonitoring f = m.getMonitoring();
+//        monitoringTest(f);
+//
+//        FlowGraph fg = m.getSolver().getFlowGraph();
+//        flowGraphTest(fg);
+//
+//        Map<TypeCollector.VariableSummary, Value> ia = f.getTypeInformation(); // Map variable --> value
+//        printTheMap(ia);
+//
+//        //System.exit(0);
+//    }
+//
+//    /**
+//     * to print out the partial map - var -> value
+//     * @param vs the variable map
+//     */
+//    private static void printTheMap(Map<TypeCollector.VariableSummary, Value> vs) {
+//
+//        System.out.println("\nPrint out the Monitoring Map : ");
+//
+//        for (Map.Entry<TypeCollector.VariableSummary, Value> entry : vs.entrySet()) {
+//            String key = entry.getKey().getVariableName();
+//            Value value = entry.getValue();
+//            System.out.println();
+//            System.out.println("key : " + key + "\n" + "value : " + value);
+//            //System.out.println("prefix    : " +value.isMaybeSingleNum());
+//        }
+//    }
+//
+//    /**
+//     * To print out the flow graph and all the functions, blocks
+//     * ,and the abstract nodes
+//     * @param fg FlowGraph
+//     */
+//    private static void flowGraphTest(FlowGraph fg) {
+//        Set<String> FunVarName;
+//        System.out.println("+++++++++++++++++++++++++++++++++");
+//        System.out.println("Print the fg From Main:\n"+fg);
+//        System.out.println("+++++++++++++++++++++++++++++++++");
+//
+//        for (Function fun : fg.getFunctions()) {
+//            FunVarName = fun.getVariableNames();
+//            for(String varnam : FunVarName)
+//                System.out.println("varnam    : " + varnam);
+//            //System.out.println(fun.getSourceLocation().getLineNumber());
+//            System.out.println("\nFunction : " + fun.getName());
+//            for (BasicBlock b : fun.getBlocks()) {
+//                for (AbstractNode an : b.getNodes()) {
+//                    //System.out.println(an.getClass());
+//                    System.out.println("AbstractNode : " + an.toString());
+//                }
+//                System.out.println("---------" );// end of block
+//            }
+//            System.out.println("+++++++++++ End of Function" );// end of function
+//
+//        }
+//    }
+//
+//    /**
+//     * To print out the messages
+//     * @param m IAnalysisMonitoring object
+//     */
+//    public static void monitoringTest(IAnalysisMonitoring m){
+//        System.out.println("\n+++++++++++++++++++++++++++++++++");
+//        System.out.println("Print the Monitoring From Main:");
+//        System.out.println("+++++++++++++++++++++++++++++++++");
+//        System.out.println("\nPrint out the Monitoring messages : ");
+//        for(Message message  : m.getMessages()){
+//            System.out.println(message.getMessage());
+//        }
+//    }
 }

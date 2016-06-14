@@ -52,5 +52,14 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="closure-compiler" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../automaton-1.11/dist/automaton.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

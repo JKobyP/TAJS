@@ -37,7 +37,9 @@ public class AbstractString {
         }
         return anyString;
     }
-
+// ---------------------------------------------------------------
+// Test these
+// ---------------------------------------------------------------
     public static AbstractString uIntString(){
         if (uIntString == null) {
             String uintsize = String.valueOf((long)Integer.MAX_VALUE * 2);
@@ -61,7 +63,7 @@ public class AbstractString {
         return anyNumberString;
     }
 
-
+//-------------------------------------------------------------------
     private AbstractString intersect(AbstractString a){
         return new AbstractString(this.dfa.intersection(a.dfa));
     }
@@ -72,10 +74,13 @@ public class AbstractString {
      * A <= B iff L(A) subseteq L(B)
      * @return true if this is less than or equal to @other, false if it is greater, or if there is no ordering.
      */
+    //---------------------------------------------------------------
+    // Test this one
+    //---------------------------------------------------------------
     public boolean isLessThan(AbstractString other) {
         return dfa.equals(dfa.intersection(other.dfa));
     }
-
+    //---------------------------------------------------------------
     public boolean hasIntersection(AbstractString other){
         return !BasicOperations.isEmpty(dfa.intersection(other.dfa));
     }
@@ -117,14 +122,32 @@ public class AbstractString {
 
     public int length() {return dfa.getNumberOfStates();}
 
+    //---------------------------------------------------------------
+    // Will fail until implementation
+    //---------------------------------------------------------------
     public boolean startsWith(AbstractString s) {
         throw new NotImplementedException();
     }
-    public char charAt(int i) { return 0;}
+    public char charAt(int i) { throw new NotImplementedException();}
+
     public AbstractString substring(int b, int e){
         throw new NotImplementedException();
     }
-    public AbstractString substring(int b){
+    public AbstractString substring(int b) {
         throw new NotImplementedException();
+    }
+    //---------------------------------------------------------------
+
+    @Override
+    public String toString() {
+        return "anyString = " + anyString().dfa + "uIntString = " + uIntString().dfa + "]";
+    }
+
+    public Automaton getDfa() {
+        return dfa;
+    }
+
+    public AbstractString getUIntString() {
+        return uIntString;
     }
 }
