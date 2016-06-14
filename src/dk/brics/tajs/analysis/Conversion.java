@@ -354,7 +354,7 @@ public class Conversion {
                     result = result.joinBool(false);
                 else
                     result = result.joinBool(true);
-            } else if (v.isMaybeStrOther() || v.isMaybeStrIdentifierParts() || v.isMaybeStrJSON())
+            } else if (v.getAbstractStr().run(""))
                 result = result.joinAnyBool();
             else
                 result = result.joinBool(true);

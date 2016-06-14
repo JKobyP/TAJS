@@ -17,13 +17,6 @@ public class AbstractString {
     private static AbstractString anyNumberString;
     private static AbstractString empty;
 
-    public AbstractString(String s){
-        dfa = AbstractOperations.newStr(s);
-    }
-    private AbstractString(Automaton a) {
-        dfa = a;
-    }
-
     public static AbstractString newEmptyAbstractString(){
         if (empty == null) {
             empty = new AbstractString(BasicAutomata.makeEmpty());
@@ -61,9 +54,20 @@ public class AbstractString {
         return anyNumberString;
     }
 
+    public AbstractString(String s){
+        dfa = BasicAutomata.makeString(s);
+    }
 
-    private AbstractString intersect(AbstractString a){
+    private AbstractString(Automaton a) {
+        dfa = a;
+    }
+
+    public AbstractString intersect(AbstractString a){
         return new AbstractString(this.dfa.intersection(a.dfa));
+    }
+
+    public boolean run(String s) {
+        return dfa.run(s);
     }
 
     /**
@@ -107,8 +111,16 @@ public class AbstractString {
     // Abstract Operations
 
     public AbstractString concat(AbstractString b) {
-        dfa = AbstractOperations.concat(dfa, b.dfa);
+        dfa = BasicOperations.concatenate(dfa, b.dfa);
         return this;
+    }
+
+    public AbstractString contains(char c) {
+        return new AbstractString(
+                BasicOperations.intersection(dfa,
+                BasicAutomata.makeAnyString()
+                             .concatenate(BasicAutomata.makeChar(c)
+                             .concatenate(BasicAutomata.makeAnyString()))));
     }
 
     public AbstractString getComplement() {

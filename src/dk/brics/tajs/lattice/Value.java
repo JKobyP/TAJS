@@ -2057,6 +2057,10 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         return str.stringValue();
     }
 
+    public AbstractString getAbstractStr() {
+        return str;
+    }
+
     @Override
     public String getPrefix() {
         checkNotPolymorphicOrUnknown();
@@ -2331,22 +2335,10 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         if ((flags & STR_JSON) != 0)
             return true; // TODO: check that the string is really a JSON string? (true is a sound approximation)
         if (str != null) {
-            if ((flags & STR_PREFIX) != 0)
-                return s.startsWith(str.stringValue()) && Strings.isIdentifierParts(s.substring(str.length())); // e.g. s="qwerty" matches this="qw"+idparts
-            else
-                return s.equals(getStr());
-        } else if (Strings.isArrayIndex(s))
-            return (flags & (STR_UINT | STR_IDENTIFIERPARTS)) != 0;
-        else if (s.equals("Infinity") || s.equals("NaN"))
-            return (flags & (STR_OTHERNUM | STR_IDENTIFIER)) != 0;
-        else if (Strings.isNumber(s))
-            return (flags & STR_OTHERNUM) != 0;
-        else if (Strings.isIdentifier(s))
-            return (flags & (STR_IDENTIFIER | STR_IDENTIFIERPARTS)) != 0;
-        else if (Strings.isIdentifierParts(s))
-            return (flags & STR_IDENTIFIERPARTS) != 0;
-        else
-            return (flags & STR_OTHER) != 0;
+            return str.run(s);
+        } else {
+            return false;
+        }
     }
 
     private static Value reallyMakeAnyStr() {
