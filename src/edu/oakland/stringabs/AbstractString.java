@@ -138,8 +138,12 @@ public class AbstractString implements AbstractOperations {
     }
     // Abstract Operations
 
+    public static AbstractString concat(AbstractString a, AbstractString b) {
+        return new AbstractString(BasicOperations.concatenate(a.dfa,b.dfa));
+    }
+
     public AbstractString concat(AbstractString b) {
-        dfa = BasicOperations.concatenate(dfa, b.dfa);
+        dfa = concat(this, b).dfa;
         return this;
     }
 

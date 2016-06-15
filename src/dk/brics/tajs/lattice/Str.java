@@ -182,5 +182,5 @@ public interface Str {
      * Gets the AbstractString object this value holds
      */
     AbstractString getAbstractStr();
-    Value concatenate(Str s);
+    Value strConcatenate(Str s);
 }
