@@ -2057,6 +2057,12 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         return str.stringValue();
     }
 
+    public Value strConcatenate(Str s) {
+        Value r = new Value(this);
+        r.str = AbstractString.concat(str, s.getAbstractStr());
+        return r;
+    }
+
     public AbstractString getAbstractStr() {
         return str;
     }
