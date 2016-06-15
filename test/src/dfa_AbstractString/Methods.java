@@ -1,9 +1,5 @@
 package edu.oakland.stringabs;
 
-import dk.brics.automaton.Automaton;
-import dk.brics.automaton.BasicAutomata;
-import dk.brics.automaton.BasicOperations;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -37,7 +33,7 @@ public class Methods {
 
     @Test
     public void uIntString_test() {
-        AbstractString uInt = new AbstractString("").uIntString();
+        AbstractString uInt = AbstractString.uIntString();
 
         assertEquals(true, uInt.run("1234"));
         assertEquals(true, uInt.run("4294967294"));
@@ -50,7 +46,7 @@ public class Methods {
 
     @Test
     public void otherNumStr_test() {
-        AbstractString oNum = new AbstractString("").otherNumString();
+        AbstractString oNum = AbstractString.otherNumString();
 
         assertEquals(false, oNum.run("1234"));
         assertEquals(true, oNum.run("-14635677"));
@@ -62,7 +58,7 @@ public class Methods {
 
     @Test
     public void getAnyNumberString_test() {
-        AbstractString nStr = new AbstractString("").getAnyNumberString();
+        AbstractString nStr = AbstractString.getAnyNumberString();
 
         assertEquals(true, nStr.run("1234"));
         assertEquals(true, nStr.run("12.34"));
@@ -80,9 +76,22 @@ public class Methods {
     @Test
     public void isLessThan_test() {
         AbstractString a = new AbstractString("kappa");
-        AbstractString b = new AbstractString("kappag");
+        AbstractString aa = a.leastUpperBound(a);
+        AbstractString b = new AbstractString("phi");
+        AbstractString c = new AbstractString("kappo");
+        AbstractString d =  c.leastUpperBound(b);
+        AbstractString empty = AbstractString.newEmptyAbstractString();
 
-        assertEquals(false, a.isLessThan(b));
+        assertEquals(true, a.isLessThan(aa));     // {"kappa"} < {"kappa", "kappa"}
+        assertEquals(true, aa.isLessThan(a));     // {"kappa", "kappa"} < {"kappa"}
+        assertEquals(false, a.isLessThan(b));     // {"kappa"} < {"phi"}
+        assertEquals(false, b.isLessThan(a));     // {"phi"} < {"kappa"}
+        assertEquals(false, a.isLessThan(c));     // {"kappa"} < {"kappo"}
+        assertEquals(false, a.isLessThan(d));     // {"kappa"} < {"kappo", "phi"}
+        assertEquals(true, b.isLessThan(d));      // {"phi"} < {"kappo", "phi"}
+        assertEquals(true, c.isLessThan(d));      // {"kappo"} < {"kappo", "phi"}
+        assertEquals(true, empty.isLessThan(a));  // {} < {"kappa"}
+
     }
 
     public static void main(String[] args) {
