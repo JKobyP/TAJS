@@ -93,8 +93,7 @@ public class NativeFunctions {
             return;
         // step 12-15 assignment to 'length', need to check for RangeError exceptions and array truncation
         boolean definitely_length = propertystr.isMaybeSingleStr() && propertystr.getStr().equals("length");
-        boolean maybe_length = propertystr.isMaybeStrIdentifier() || propertystr.isMaybeStrIdentifierParts() || propertystr.isMaybeStrJSON()
-                || (propertystr.isMaybeStrPrefixedIdentifierParts() && "length".startsWith(propertystr.getPrefix()));
+        boolean maybe_length = propertystr.getAbstractStr().run("length");
         Double old_length = UnknownValueResolver.getRealValue(pv.readPropertyValue(arrays, "length"), state).getNum();
         if (definitely_length || maybe_length) {
             value = UnknownValueResolver.getRealValue(value, state);

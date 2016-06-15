@@ -2040,7 +2040,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public boolean isMaybeSingleStr() {
         checkNotPolymorphicOrUnknown();
-        return str != null && !isMaybeStrPrefixedIdentifierParts();
+        return str != null && str.stringValue() != null;
     }
 
     @Override
