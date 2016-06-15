@@ -16,6 +16,8 @@
 
 package dk.brics.tajs.lattice;
 
+import edu.oakland.stringabs.AbstractString;
+
 /**
  * 'String' facet for abstract values.
  */
@@ -175,4 +177,10 @@ public interface Str {
      * Checks whether the given string is matched by this value.
      */
     boolean isMaybeStr(String s);
+
+    /**
+     * Gets the AbstractString object this value holds
+     */
+    AbstractString getAbstractStr();
+    Value concatenate(Str s);
 }

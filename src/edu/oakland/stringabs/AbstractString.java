@@ -6,10 +6,12 @@ import dk.brics.automaton.BasicOperations;
 import dk.brics.automaton.RegExp;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.Set;
+
 /**
  * Created by koby on 6/9/2016.
  */
-public class AbstractString {
+public class AbstractString implements AbstractOperations {
     private Automaton dfa;
     private static AbstractString anyString;
     private static AbstractString uIntString;
@@ -51,7 +53,7 @@ public class AbstractString {
 
     public static AbstractString getAnyNumberString() {
         if(anyNumberString == null) {
-            anyNumberString = new AbstractString(new RegExp("\\-?(([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+][0-9]+)?|Infinity)|NaN").toAutomaton());
+            anyNumberString = new AbstractString(new RegExp("\\-?(([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+]?[0-9]+)?|Infinity)|NaN").toAutomaton());
         }
         return anyNumberString;
     }
@@ -67,6 +69,14 @@ public class AbstractString {
     //-------------------------------------------------------------------
     public AbstractString intersect(AbstractString a){
         return new AbstractString(this.dfa.intersection(a.dfa));
+    }
+
+    public AbstractString leastUpperBound(AbstractString a) {
+        return new AbstractString(this.dfa.union(a.dfa));
+    }
+
+    public AbstractString widen(AbstractString a) {
+        throw new NotImplementedException();
     }
 
     public boolean run(String s) {
@@ -94,8 +104,20 @@ public class AbstractString {
         return dfa.isEmpty();
     }
 
+    /**
+     *
+     * @return If the dfa derives only one strin, then that string. Otherwise, null.
+     */
     public String stringValue(){
-        return dfa.getSingleton();
+        Set<String> language = dfa.getFiniteStrings(1); // gets finite strings, returns null if there are more than 1.
+        if (language != null && language.size() == 1) { // We use this instead of getSingleton because getSingleton's
+            return language.iterator().next();          // return value depends on the form of the dfa
+        }
+        return null;
+    }
+
+    public boolean isSingleString(){
+        return stringValue() != null;
     }
 
     public boolean equals(String s) {
