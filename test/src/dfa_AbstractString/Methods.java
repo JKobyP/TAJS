@@ -37,6 +37,17 @@ public class Methods {
     }
 
     @Test
+    public void getIdentifierString_test() {
+        AbstractString iStr = AbstractString.getIdentifierString();
+        Automaton iStr_dfa = iStr.getDfa();
+
+       // System.out.println(iStr_dfa.getStrings(5));
+        assertEquals(true, iStr_dfa.run("Hello"));
+        assertEquals(true, iStr_dfa.run("H4i"));
+        assertEquals(false, iStr_dfa.run("45"));
+    }
+
+    @Test
     public void otherNumStr_test() {
         AbstractString oNum = new AbstractString("").otherNumString();
         Automaton oNum_dfa = oNum.getDfa();

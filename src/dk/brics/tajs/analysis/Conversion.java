@@ -36,6 +36,7 @@ import dk.brics.tajs.util.AnalysisException;
 import dk.brics.tajs.util.None;
 import dk.brics.tajs.util.OptionalObjectVisitor;
 import dk.brics.tajs.util.Some;
+import edu.oakland.stringabs.AbstractString;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -423,18 +424,14 @@ public class Conversion {
                     v = Value.makeNumNaN();
             }
         } else {
-            if (str.isMaybeStrIdentifierParts()
-                    || str.isMaybeStrPrefixedIdentifierParts()
-                    || str.isMaybeStrJSON()
-                    || str.isMaybeStrOther() /* 9.3.1. allows trimming */
-                    || (str.isMaybeStrUInt() && str.isMaybeStrOtherNum())) {
-                v = Value.makeAnyNum(); // TODO: could be more precise for STR_PREFIX if the prefix string is not a UInt
-            } else if (str.isMaybeStrUInt()) {
+            if (str.getAbstractStr().isLessThan(AbstractString.uIntString())) {
                 v = Value.makeAnyNumUInt();
-            } else if (str.isMaybeStrOtherNum()) {
+            } else if (str.getAbstractStr().isLessThan(AbstractString.otherNumString())) {
                 v = Value.makeAnyNumOther().joinNumNaN().joinNumInf();
+            } else if (str.getAbstractStr().isLessThan(AbstractString.getIdentifierPartsString())) {
+              v = Value.makeNumNaN();
             } else {
-                v = Value.makeNone();
+                v = Value.makeAnyNum();
             }
         }
         if (v.isMaybeNaN())
@@ -517,7 +514,7 @@ public class Conversion {
             // If the argument is true, then the result is "true".
             // If the argument is false, then the result is "false".
             if (v.isMaybeAnyBool())
-                result = result.joinAnyStrIdentifierParts(); // join of "true" and "false"
+                result = result.joinStr("true").joinStr("false"); // join of "true" and "false"
             else if (v.isMaybeTrueButNotFalse())
                 result = result.joinStr("true");
             else
