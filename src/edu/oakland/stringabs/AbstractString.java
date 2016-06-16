@@ -129,7 +129,7 @@ public class AbstractString implements AbstractOperations {
     // Test this one
     //---------------------------------------------------------------
     public boolean isLessThan(AbstractString other) {
-        return dfa.equals(dfa.intersection(other.dfa));
+        return other != null && dfa.equals(dfa.intersection(other.dfa));
     }
     //---------------------------------------------------------------
     public boolean hasIntersection(AbstractString other){
@@ -179,6 +179,11 @@ public class AbstractString implements AbstractOperations {
     // Abstract Operations
 
     public static AbstractString concat(AbstractString a, AbstractString b) {
+        if (a==null) {
+            return b;
+        } else if (b == null) {
+            return a;
+        }
         return new AbstractString(BasicOperations.concatenate(a.dfa,b.dfa));
     }
 
@@ -219,7 +224,25 @@ public class AbstractString implements AbstractOperations {
 
     @Override
     public String toString() {
-        return "anyString = " + anyString().dfa + "uIntString = " + uIntString().dfa + "]";
+        if(isSingleString()) {
+            return stringValue();
+        } else if (equals(AbstractString.uIntString())) {
+            return "UInt string";
+        } else if (equals(AbstractString.otherNumString())) {
+            return "Other number string";
+        } else if (equals(AbstractString.getAnyNumberString())) {
+            return "Any number string";
+        } else if (equals(getIdentifierPartsString()) || equals(getIdentifierString())) {
+            return "Identifier parts string";
+        } else if (equals(getStringOther())) {
+            return "String other";
+        } else if (equals(getAnyString())){
+            return "Any string";
+        } else {
+            return "Shortest example: " + dfa.getShortestExample(true) +
+                    "\nMore than 10 derivations? " + (dfa.getFiniteStrings(10) == null ? "yes" : "no") +
+                    "\nNumber of states: " + dfa.getNumberOfStates();
+        }
     }
 
     public Automaton getDfa() {
