@@ -37,7 +37,7 @@ public class Methods {
 
         assertEquals(true, uInt.run("1234"));
         assertEquals(true, uInt.run("4294967294"));
-        assertEquals(false, uInt.run("4294967295"));
+        assertEquals(true, uInt.run("28446744073709551615"));
         assertEquals(false, uInt.run("-14635677"));
         assertEquals(true, uInt.run("0000000"));
         assertEquals(false, uInt.run("4.5"));
@@ -74,24 +74,37 @@ public class Methods {
     }
 
     @Test
-    public void isLessThan_test() {
+    public void isSubset_test() {
         AbstractString a = new AbstractString("kappa");
-        AbstractString aa = a.leastUpperBound(a);
         AbstractString b = new AbstractString("phi");
         AbstractString c = new AbstractString("kappo");
-        AbstractString d =  c.leastUpperBound(b);
+        AbstractString bc =  b.leastUpperBound(c);
+        AbstractString abc = a.leastUpperBound(bc);
         AbstractString empty = AbstractString.newEmptyAbstractString();
 
-        assertEquals(true, a.isLessThan(aa));     // {"kappa"} < {"kappa", "kappa"}
-        assertEquals(true, aa.isLessThan(a));     // {"kappa", "kappa"} < {"kappa"}
-        assertEquals(false, a.isLessThan(b));     // {"kappa"} < {"phi"}
-        assertEquals(false, b.isLessThan(a));     // {"phi"} < {"kappa"}
-        assertEquals(false, a.isLessThan(c));     // {"kappa"} < {"kappo"}
-        assertEquals(false, a.isLessThan(d));     // {"kappa"} < {"kappo", "phi"}
-        assertEquals(true, b.isLessThan(d));      // {"phi"} < {"kappo", "phi"}
-        assertEquals(true, c.isLessThan(d));      // {"kappo"} < {"kappo", "phi"}
-        assertEquals(true, empty.isLessThan(a));  // {} < {"kappa"}
+        assertEquals(false, a.isSubset(b));      // {"kappa"} < {"phi"}
+        assertEquals(false, b.isSubset(a));      // {"phi"} < {"kappa"}
+        assertEquals(false, a.isSubset(c));      // {"kappa"} < {"kappo"}
+        assertEquals(false, a.isSubset(bc));     // {"kappa"} < {"phi", "kappo"}
+        assertEquals(true, b.isSubset(bc));      // {"phi"} < {"phi", "kappo"}
+        assertEquals(true, c.isSubset(bc));      // {"kappo"} < {"phi", "kappo"}
+        assertEquals(true, bc.isSubset(abc));    // {"phi", "kappo"} < {"kappa", "phi", "kappo"}
+        assertEquals(true, empty.isSubset(a));   // {} < {"kappa"}
+    }
 
+    @Test
+    public void isMaybeAnyStr_test() {
+        AbstractString a = new AbstractString("yes");
+        AbstractString any = AbstractString.anyString();
+
+        assertEquals(true, any.equals(AbstractString.anyString()));
+    }
+
+    @Test
+    public void stringValue_test() {
+        AbstractString empty = AbstractString.newEmptyAbstractString();
+
+        assertEquals(null, empty.stringValue());
     }
 
     public static void main(String[] args) {
