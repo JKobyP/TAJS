@@ -1083,7 +1083,7 @@ public class Monitoring implements IAnalysisMonitoring {
     private static boolean checkPropertyNameMayInterfereWithBuiltInProperties(Str propertystr) {
         return !propertystr.isMaybeSingleStr() &&
                 (propertystr.isMaybeStrIdentifier() || propertystr.isMaybeStrIdentifierParts() ||
-                        propertystr.isMaybeStrPrefixedIdentifierParts() || propertystr.isMaybeStrJSON()); // TODO: more precise pattern of what may interfere?
+                        propertystr.isMaybeStrJSON()); // TODO: more precise pattern of what may interfere?
     }
 
     /**

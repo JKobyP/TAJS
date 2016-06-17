@@ -9,4 +9,5 @@ function greeting () {
     }
     return x;
 }
-var y = greeting() + "something, world!".substring(9);
+var w = greeting();
+var y = w + "something, world!".substring(9);
