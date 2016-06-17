@@ -1263,7 +1263,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 if (str != null) {
                     if (any)
                         b.append('|');
-                    b.append('"').append(Strings.escape(getStr())).append('"');
+                    b.append(Strings.escape(str.toString()));
                     any = true;
                 }
             }
@@ -1945,7 +1945,6 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     }
 
     /* the Str facet */
-    // TODO: These nullchecks are sketchy and might not lead to correctness
     @Override
     public boolean isMaybeAnyStr() {
         checkNotPolymorphicOrUnknown();
@@ -1973,19 +1972,19 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public boolean isMaybeStrOtherNum() {
         checkNotPolymorphicOrUnknown();
-        return str != null && str.hasIntersection(AbstractString.otherNumString());
+        return str != null && str.equals(AbstractString.otherNumString());
     }
 
     @Override
     public boolean isMaybeStrIdentifier() {
         checkNotPolymorphicOrUnknown();
-        return str != null && str.hasIntersection(AbstractString.getIdentifierString());
+        return str != null && str.equals(AbstractString.getIdentifierString());
     }
 
     @Override
     public boolean isMaybeStrIdentifierParts() {
         checkNotPolymorphicOrUnknown();
-        return str != null && str.hasIntersection(AbstractString.getIdentifierPartsString());
+        return str != null && str.equals(AbstractString.getIdentifierPartsString());
     }
 
     //no longer used
@@ -1998,7 +1997,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public boolean isMaybeStrOther() {
         checkNotPolymorphicOrUnknown();
-        return str != null && str.hasIntersection(AbstractString.getStringOther());
+        return str != null && str.equals(AbstractString.getStringOther());
     }
 
     @Override
@@ -2153,10 +2152,9 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         if (isMaybeStrOther())
             return this;
         Value r = new Value(this);
-        r.flags |= STR_OTHER;
         r.flags &= ~STR_PREFIX;
-        r.str = null;
-        r.joinSingleStringOrPrefixString(this);
+        r.str = r.str.leastUpperBound(AbstractString.getStringOther());
+        //r.joinSingleStringOrPrefixString(this);
         return canonicalize(r);
     }
 
@@ -2174,7 +2172,6 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     }
 
     // not used
-    /*
     @Override
     public Value joinPrefixedIdentifierParts(String s) {
         checkNotPolymorphicOrUnknown();
@@ -2187,7 +2184,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         r.joinSingleStringOrPrefixString(tmp);
         return canonicalize(r);
     }
-*/
+
     /**
      * Joins the given single/prefix string as a fuzzy non-prefix value.
      * The current value is assumed not to be a single or prefix string.
@@ -2238,6 +2235,19 @@ public final class Value implements Undef, Null, Bool, Num, Str {
      * @return true if this value is modified
      */
     private boolean joinSingleStringOrPrefixString(Value v) { // TODO: could be more precise in some cases...
+        AbstractString oldstr = str;
+        if(str != null) {
+            if (v.str != null){
+                str = str.leastUpperBound(v.getAbstractStr());
+            }
+        } else if (v.str != null) {
+            str = v.str;
+            return true;
+        } else {
+            return false;
+        }
+        return !oldstr.equals(str);
+        /*
         boolean modified = false;
         boolean this_is_prefix = (flags & STR_PREFIX) != 0;
         boolean v_is_prefix = (v.flags & STR_PREFIX) != 0;
@@ -2332,6 +2342,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
             modified = true;
         }
         return modified;
+        */
     }
 
     @Override

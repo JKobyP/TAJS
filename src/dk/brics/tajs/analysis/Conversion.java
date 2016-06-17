@@ -424,12 +424,14 @@ public class Conversion {
                     v = Value.makeNumNaN();
             }
         } else {
-            if (str.getAbstractStr().isLessThan(AbstractString.uIntString())) {
+            if (str.getAbstractStr() != null && str.getAbstractStr().isLessThan(AbstractString.uIntString())) {
                 v = Value.makeAnyNumUInt();
-            } else if (str.getAbstractStr().isLessThan(AbstractString.otherNumString())) {
+            } else if (str.getAbstractStr() != null && str.getAbstractStr().isLessThan(AbstractString.otherNumString())) {
                 v = Value.makeAnyNumOther().joinNumNaN().joinNumInf();
-            } else if (str.getAbstractStr().isLessThan(AbstractString.getIdentifierPartsString())) {
+            } else if (str.getAbstractStr() != null && str.getAbstractStr().isLessThan(AbstractString.getIdentifierPartsString())) {
               v = Value.makeNumNaN();
+            } else if (str.getAbstractStr() == null || str.getAbstractStr().isEmpty()){
+                v = Value.makeNone();
             } else {
                 v = Value.makeAnyNum();
             }

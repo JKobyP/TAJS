@@ -225,23 +225,31 @@ public class AbstractString implements AbstractOperations {
     @Override
     public String toString() {
         if(isSingleString()) {
-            return stringValue();
+            return "'" + stringValue() + "'";
         } else if (equals(AbstractString.uIntString())) {
-            return "UInt string";
+            return "[UInt string]";
         } else if (equals(AbstractString.otherNumString())) {
-            return "Other number string";
+            return "[Other number string]";
         } else if (equals(AbstractString.getAnyNumberString())) {
-            return "Any number string";
+            return "[Any number string]";
         } else if (equals(getIdentifierPartsString()) || equals(getIdentifierString())) {
-            return "Identifier parts string";
+            return "[Identifier parts string]";
         } else if (equals(getStringOther())) {
-            return "String other";
+            return "[String other]";
         } else if (equals(getAnyString())){
-            return "Any string";
+            return "[Any string]";
         } else {
-            return "Shortest example: " + dfa.getShortestExample(true) +
-                    "\nMore than 10 derivations? " + (dfa.getFiniteStrings(10) == null ? "yes" : "no") +
-                    "\nNumber of states: " + dfa.getNumberOfStates();
+            Set<String> derivations = dfa.getFiniteStrings(10);
+            if (derivations != null) {
+                StringBuilder b = new StringBuilder().append("[");
+                for (String s : derivations) {
+                    b.append("'" + s + "', ");
+                }
+                b.delete(b.length()-2,b.length()).append("]");
+                return b.toString();
+            } else {
+                return dfa.getShortestExample(true) + ", " + dfa.getNumberOfStates() + " states";
+            }
         }
     }
 
