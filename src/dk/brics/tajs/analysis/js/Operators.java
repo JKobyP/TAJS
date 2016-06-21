@@ -574,7 +574,7 @@ public class Operators {
                 r = abstractNumberEquality(r, n1, v2);
             }
             if (!v2.isNotStr()) {
-                if (v1.isMaybeFuzzyStr() && v2.isMaybeFuzzyStr()) {
+                if (v1.isMaybeFuzzyStr() || v2.isMaybeFuzzyStr()) {
                     if (v1.getAbstractStr().hasIntersection(v2.getAbstractStr()))
                         r = Value.makeAnyBool();
                     else
@@ -761,13 +761,18 @@ public class Operators {
             if (!v2.isNotNum())
                 r = r.joinBool(false);
             if (!v2.isNotStr()) {
-                if (v1.isMaybeFuzzyStr() || v2.isMaybeFuzzyStr())
-                    return Value.makeAnyBool();
+                if (v1.isMaybeFuzzyStr() || v2.isMaybeFuzzyStr()) {
+                    if (v1.getAbstractStr().hasIntersection(v2.getAbstractStr()))
+                        r = Value.makeAnyBool();
+                    else
+                        r = r.joinBool(false);
+                }
                 else {
                     String s1 = v1.getStr();
                     String s2 = v2.getStr();
-                    if (s1 != null && s2 != null)
+                    if (s1 != null && s2 != null) {
                         r = r.joinBool(s1.equals(s2));
+                    }
                 }
             }
             if (v2.isMaybeObject())

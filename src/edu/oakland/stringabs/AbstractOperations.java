@@ -19,7 +19,7 @@ public interface AbstractOperations {
     AbstractString concat(AbstractString s);
     AbstractString contains(char c);
 
-    boolean isLessThan(AbstractString s);
+    boolean isSubset(AbstractString s);
     AbstractString intersect(AbstractString s);
     AbstractString leastUpperBound(AbstractString s);
     AbstractString widen(AbstractString s);

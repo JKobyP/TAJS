@@ -108,6 +108,9 @@ public class AbstractString implements AbstractOperations {
     }
 
     public AbstractString leastUpperBound(AbstractString a) {
+        if (a==null) {
+            return this;
+        }
         return new AbstractString(this.dfa.union(a.dfa));
     }
 
@@ -128,7 +131,7 @@ public class AbstractString implements AbstractOperations {
     //---------------------------------------------------------------
     // Test this one
     //---------------------------------------------------------------
-    public boolean isLessThan(AbstractString other) {
+    public boolean isSubset(AbstractString other) {
         return other != null && dfa.equals(dfa.intersection(other.dfa));
     }
     //---------------------------------------------------------------

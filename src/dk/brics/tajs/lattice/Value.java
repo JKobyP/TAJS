@@ -1051,6 +1051,9 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         if (!(obj instanceof Value))
             return false;
         Value v = (Value) obj;
+
+
+
         //noinspection StringEquality,NumberEquality
         return flags == v.flags
                 && (var == v.var || (var != null && v.var != null && var.equals(v.var)))
@@ -1951,6 +1954,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         return str != null && str.equals(AbstractString.anyString());
     }
 
+    // equals instead of intersection. Verified by comparing vanilla TAJS output.
     @Override
     public boolean isMaybeStrUInt() {
         checkNotPolymorphicOrUnknown();
@@ -1975,12 +1979,14 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         return str != null && str.equals(AbstractString.otherNumString());
     }
 
+    // equals instead of intersection. Verified by comparing output with vanilla TAJS.
     @Override
     public boolean isMaybeStrIdentifier() {
         checkNotPolymorphicOrUnknown();
         return str != null && str.equals(AbstractString.getIdentifierString());
     }
 
+    // equals instead of intersection. Verified by comparing output with vanilla TAJS.
     @Override
     public boolean isMaybeStrIdentifierParts() {
         checkNotPolymorphicOrUnknown();
@@ -2015,21 +2021,19 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public boolean isStrIdentifierOrIdentifierParts() {
         checkNotPolymorphicOrUnknown();
-        return ((flags & PRIMITIVE) == STR_IDENTIFIER || (flags & PRIMITIVE) == STR_IDENTIFIERPARTS
-                || (str != null && Strings.isIdentifierParts(getStr()))) && num == null && object_labels == null;
+        return getAbstractStr().isSubset((AbstractString.getIdentifierPartsString()));
     }
 
     @Override
     public boolean isStrIdentifier() {
         checkNotPolymorphicOrUnknown();
-        return ((flags & PRIMITIVE) == STR_IDENTIFIER
-                || (str != null && Strings.isIdentifier(getStr()))) && num == null && object_labels == null;
+        return getAbstractStr().isSubset(AbstractString.getIdentifierString());
     }
 
     @Override
     public boolean isMaybeStrOnlyUInt() {
         checkNotPolymorphicOrUnknown();
-        return str != null && str.isLessThan(AbstractString.uIntString());
+        return str != null && str.isSubset(AbstractString.uIntString());
     }
 
     @Override
@@ -2087,7 +2091,11 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         Value r = new Value(this);
         r.flags |= STR_UINT | STR_OTHERNUM | STR_IDENTIFIERPARTS | STR_OTHER;
         r.flags &= ~STR_PREFIX;
-        r.str = str.leastUpperBound(AbstractString.anyString());
+        if(str != null) {
+            r.str = str.leastUpperBound(AbstractString.anyString());
+        } else {
+            r.str = AbstractString.newEmptyAbstractString().leastUpperBound((AbstractString.anyString()));
+        }
         return canonicalize(r);
     }
 
@@ -2099,7 +2107,11 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         Value r = new Value(this);
         r.flags |= STR_UINT;
         r.flags &= ~STR_PREFIX;
-        r.str = str.leastUpperBound(AbstractString.uIntString());
+        if(str != null) {
+            r.str = str.leastUpperBound(AbstractString.uIntString());
+        } else {
+            r.str = AbstractString.newEmptyAbstractString().leastUpperBound((AbstractString.uIntString()));
+        }
         //r.joinSingleStringOrPrefixString(this);
         return canonicalize(r);
     }
@@ -2112,7 +2124,11 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         Value r = new Value(this);
         r.flags |= STR_OTHERNUM;
         r.flags &= ~STR_PREFIX;
-        r.str = str.leastUpperBound(AbstractString.otherNumString());
+        if(str != null) {
+            r.str = str.leastUpperBound(AbstractString.otherNumString());
+        } else {
+            r.str = AbstractString.newEmptyAbstractString().leastUpperBound((AbstractString.otherNumString()));
+        }
         //r.joinSingleStringOrPrefixString(this);
         return canonicalize(r);
     }
