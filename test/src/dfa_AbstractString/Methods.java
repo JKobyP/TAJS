@@ -1,5 +1,6 @@
 package edu.oakland.stringabs;
 
+import dk.brics.automaton.Automaton;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

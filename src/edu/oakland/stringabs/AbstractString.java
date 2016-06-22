@@ -251,7 +251,7 @@ public class AbstractString implements AbstractOperations {
                 b.delete(b.length()-2,b.length()).append("]");
                 return b.toString();
             } else {
-                return dfa.getShortestExample(true) + ", " + dfa.getNumberOfStates() + " states";
+                return "[Many possible strings (" + dfa.getNumberOfStates()+ " states), such as \'" + dfa.getShortestExample(true) + "\']";
             }
         }
     }
