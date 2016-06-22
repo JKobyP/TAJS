@@ -279,54 +279,7 @@ public class Operators {
     }
 
     private static Value addStrings(Str s1, Str s2, Value r) { // TODO: could be more precise in some cases...
-        if (s1.isMaybeSingleStr()) {
-            // s1 is single string, handle string parts of s2
-            if (s2.isMaybeSingleStr()) {
-                // s1 and s2 are both single strings
-                r = r.joinStr(s1.getStr() + s2.getStr());
-            } else if (s2.isMaybeFuzzyStr()) {
-                // s1 is single string, s2 is fuzzy string
-                if (Strings.isIdentifier(s1.getStr())
-                        && (s2.isMaybeStrUInt() || s2.isMaybeStrIdentifier() || s2.isMaybeStrIdentifierParts() || (s2.isMaybeStrPrefixedIdentifierParts() && Strings.isIdentifierParts(s2.getPrefix())))
-                        && !(s2.isMaybeStrOtherNum() || s2.isMaybeStrOther()))
-                    r = r.joinPrefixedIdentifierParts(s1.getStr());
-                else if (Strings.isIdentifierParts(s1.getStr())
-                        && (s2.isMaybeStrUInt() || s2.isMaybeStrIdentifier() || s2.isMaybeStrIdentifierParts() || (s2.isMaybeStrPrefixedIdentifierParts() && Strings.isIdentifierParts(s2.getPrefix())))
-                        && !(s2.isMaybeStrOtherNum() || s2.isMaybeStrOther()))
-                    r = r.joinAnyStrIdentifierParts();
-                else
-                    r = Value.makeAnyStr();
-            }
-        } else if (s1.isMaybeFuzzyStr()) {
-            // s1 is fuzzy string, handle string parts of s2
-            if (s2.isMaybeSingleStr()) {
-                // s1 is fuzzy string, p2 is single string
-                if (s1.isMaybeStrPrefixedIdentifierParts()
-                        && Strings.isIdentifierParts(s2.getStr()))
-                    r = r.joinPrefixedIdentifierParts(s1.getPrefix());
-                else if ((s1.isMaybeStrUInt() || s1.isMaybeStrIdentifier() || s1.isMaybeStrIdentifierParts() || (s1.isMaybeStrPrefixedIdentifierParts() && Strings.isIdentifierParts(s1.getPrefix())))
-                        && !(s1.isMaybeStrOtherNum() || s1.isMaybeStrOther())
-                        && Strings.isIdentifierParts(s2.getStr()))
-                    r = r.joinAnyStrIdentifierParts();
-                else
-                    r = Value.makeAnyStr();
-            } else if (s2.isMaybeFuzzyStr()) {
-                // s1 and s2 are both fuzzy strings
-                if (s1.isMaybeStrPrefixedIdentifierParts()
-                        && (s2.isMaybeStrUInt() || s2.isMaybeStrIdentifier() || s2.isMaybeStrIdentifierParts() || (s2.isMaybeStrPrefixedIdentifierParts() && Strings.isIdentifierParts(s2.getPrefix())))
-                        && !(s2.isMaybeStrOtherNum() || s2.isMaybeStrOther()))
-                    r = r.joinPrefixedIdentifierParts(s1.getPrefix());
-                else if (s1.isMaybeStrUInt() && !s1.isMaybeStrSomeNonUInt() && s2.isMaybeStrUInt() && !s2.isMaybeStrSomeNonUInt()) {
-                    r = r.joinAnyStrOtherNum();
-                } else if ((s1.isMaybeStrUInt() || s1.isMaybeStrIdentifier() || s1.isMaybeStrIdentifierParts() || (s1.isMaybeStrPrefixedIdentifierParts() && Strings.isIdentifierParts(s1.getPrefix())))
-                        && !(s1.isMaybeStrOtherNum() || s1.isMaybeStrOther())
-                        && (s2.isMaybeStrUInt() || s2.isMaybeStrIdentifier() || s2.isMaybeStrIdentifierParts() || (s2.isMaybeStrPrefixedIdentifierParts() && Strings.isIdentifierParts(s2.getPrefix())))
-                        && !(s2.isMaybeStrOtherNum() || s2.isMaybeStrOther()))
-                    r = r.joinAnyStrIdentifierParts();
-                else
-                    r = Value.makeAnyStr();
-            }
-        }
+        r = s1.strConcatenate(s2);
         if (s1.isMaybeStrJSON() || s2.isMaybeStrJSON()) // TODO: better precision for "(" + JSON + ")"
             r = r.join(Value.makeJSONStr());
         return r;
@@ -621,8 +574,12 @@ public class Operators {
                 r = abstractNumberEquality(r, n1, v2);
             }
             if (!v2.isNotStr()) {
-                if (v1.isMaybeFuzzyStr() || v2.isMaybeFuzzyStr())
-                    r = Value.makeAnyBool();
+                if (v1.isMaybeFuzzyStr() || v2.isMaybeFuzzyStr()) {
+                    if (v1.getAbstractStr().hasIntersection(v2.getAbstractStr()))
+                        r = Value.makeAnyBool();
+                    else
+                        r = r.joinBool(false);
+                }
                 else {
                     String s1 = v1.getStr();
                     String s2 = v2.getStr();
@@ -804,13 +761,18 @@ public class Operators {
             if (!v2.isNotNum())
                 r = r.joinBool(false);
             if (!v2.isNotStr()) {
-                if (v1.isMaybeFuzzyStr() || v2.isMaybeFuzzyStr())
-                    return Value.makeAnyBool();
+                if (v1.isMaybeFuzzyStr() || v2.isMaybeFuzzyStr()) {
+                    if (v1.getAbstractStr().hasIntersection(v2.getAbstractStr()))
+                        r = Value.makeAnyBool();
+                    else
+                        r = r.joinBool(false);
+                }
                 else {
                     String s1 = v1.getStr();
                     String s2 = v2.getStr();
-                    if (s1 != null && s2 != null)
+                    if (s1 != null && s2 != null) {
                         r = r.joinBool(s1.equals(s2));
+                    }
                 }
             }
             if (v2.isMaybeObject())

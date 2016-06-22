@@ -6,3 +6,5 @@
 .idea/workspace.xml
 **/*.iml
 /local-development.properties
+/src/dk/brics/tajs/Main.java
+*.iml

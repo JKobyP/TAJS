@@ -243,7 +243,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 msg = "PRESENT set for non-polymorphic value";
             if (msg != null)
                 throw new AnalysisException("Invalid value (0x" + Integer.toHexString(v.flags) + ","
-                        + Strings.escape(v.str.stringValue()) + "," + v.num + "," + v.object_labels + "), " + msg);
+                        + Strings.escape(v.getStr()) + "," + v.num + "," + v.object_labels + "), " + msg);
             if (Options.get().isPolymorphicDisabled() && v.isPolymorphic())
                 throw new AnalysisException("Unexpected polymorphic value");
         }
@@ -992,6 +992,9 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         if (!(obj instanceof Value))
             return false;
         Value v = (Value) obj;
+
+
+
         //noinspection StringEquality,NumberEquality
         return flags == v.flags
                 && (var == v.var || (var != null && v.var != null && var.equals(v.var)))
@@ -1201,15 +1204,10 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                     b.append("JSONStr");
                     any = true;
                 }
-                if (isMaybeStrPrefixedIdentifierParts()) {
+                if (str != null) {
                     if (any)
                         b.append('|');
-                    b.append("PrefixIdentPartsStr[").append(Strings.escape(str.stringValue())).append(']');
-                    any = true;
-                } else if (str != null) {
-                    if (any)
-                        b.append('|');
-                    b.append('"').append(Strings.escape(str.stringValue())).append('"');
+                    b.append(Strings.escape(str.toString()));
                     any = true;
                 }
             }
@@ -1892,50 +1890,52 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     }
 
     /* the Str facet */
-
     @Override
     public boolean isMaybeAnyStr() {
         checkNotPolymorphicOrUnknown();
-        return (flags & (STR_UINT | STR_OTHERNUM | STR_IDENTIFIERPARTS | STR_OTHER)) == (STR_UINT | STR_OTHERNUM | STR_IDENTIFIERPARTS | STR_OTHER);
+        return str != null && str.equals(AbstractString.anyString());
     }
 
+    // equals instead of intersection. Verified by comparing vanilla TAJS output.
     @Override
     public boolean isMaybeStrUInt() {
         checkNotPolymorphicOrUnknown();
-        return (flags & STR_UINT) != 0;
+        return str != null && str.equals(AbstractString.uIntString());
     }
 
     @Override
     public boolean isMaybeStrSomeUInt() {
         checkNotPolymorphicOrUnknown();
-        return (flags & (STR_UINT | STR_IDENTIFIERPARTS)) != 0 || ((flags & STR_PREFIX) != 0 && Strings.isArrayIndex(str.stringValue()));
+        return str != null && str.hasIntersection(AbstractString.uIntString());
     }
 
     @Override
     public boolean isMaybeStrSomeNonUInt() {
         checkNotPolymorphicOrUnknown();
-        return (flags & (STR_OTHERNUM | STR_PREFIX | STR_IDENTIFIER | STR_IDENTIFIERPARTS | STR_OTHER | STR_JSON)) != 0
-                || (str != null && !Strings.isArrayIndex(str.stringValue()));
+        return str != null && str.hasIntersection(AbstractString.uIntString().getComplement());
     }
 
     @Override
     public boolean isMaybeStrOtherNum() {
         checkNotPolymorphicOrUnknown();
-        return (flags & STR_OTHERNUM) != 0;
+        return str != null && str.equals(AbstractString.otherNumString());
     }
 
+    // equals instead of intersection. Verified by comparing output with vanilla TAJS.
     @Override
     public boolean isMaybeStrIdentifier() {
         checkNotPolymorphicOrUnknown();
-        return (flags & STR_IDENTIFIER) != 0;
+        return str != null && str.equals(AbstractString.getIdentifierString());
     }
 
+    // equals instead of intersection. Verified by comparing output with vanilla TAJS.
     @Override
     public boolean isMaybeStrIdentifierParts() {
         checkNotPolymorphicOrUnknown();
-        return (flags & STR_IDENTIFIERPARTS) != 0;
+        return str != null && str.equals(AbstractString.getIdentifierPartsString());
     }
 
+    //no longer used
     @Override
     public boolean isMaybeStrPrefixedIdentifierParts() {
         checkNotPolymorphicOrUnknown();
@@ -1945,7 +1945,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public boolean isMaybeStrOther() {
         checkNotPolymorphicOrUnknown();
-        return (flags & STR_OTHER) != 0;
+        return str != null && str.equals(AbstractString.getStringOther());
     }
 
     @Override
@@ -1963,48 +1963,53 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public boolean isStrIdentifierOrIdentifierParts() {
         checkNotPolymorphicOrUnknown();
-        return ((flags & PRIMITIVE) == STR_IDENTIFIER || (flags & PRIMITIVE) == STR_IDENTIFIERPARTS
-                || (str != null && Strings.isIdentifierParts(str.stringValue()))) && num == null && object_labels == null;
+        return getAbstractStr().isSubset((AbstractString.getIdentifierPartsString()));
     }
 
     @Override
     public boolean isStrIdentifier() {
         checkNotPolymorphicOrUnknown();
-        return ((flags & PRIMITIVE) == STR_IDENTIFIER
-                || (str != null && Strings.isIdentifier(str.stringValue()))) && num == null && object_labels == null;
+        return getAbstractStr().isSubset(AbstractString.getIdentifierString());
     }
 
     @Override
     public boolean isMaybeStrOnlyUInt() {
         checkNotPolymorphicOrUnknown();
-        return (flags & STR) == STR_UINT;
+        return str != null && str.isSubset(AbstractString.uIntString());
     }
 
     @Override
     public boolean isMaybeSingleStr() {
         checkNotPolymorphicOrUnknown();
-        return str != null && !isMaybeStrPrefixedIdentifierParts();
+        return str != null && str.stringValue() != null;
     }
 
     @Override
     public boolean isMaybeFuzzyStr() {
         checkNotPolymorphicOrUnknown();
-        return (flags & STR) != 0;
+        return str != null && !isMaybeSingleStr();
     }
 
     @Override
     public AbstractString getStr() {
         checkNotPolymorphicOrUnknown();
-        if (isMaybeStrPrefixedIdentifierParts())
-            return null;
+        return str.stringValue();
+    }
+
+    public Value strConcatenate(Str s) {
+        Value r = new Value(this);
+        r.str = AbstractString.concat(str, s.getAbstractStr());
+        return r;
+    }
+
+    public AbstractString getAbstractStr() {
         return str;
     }
 
+    // not used
     @Override
     public String getPrefix() {
         checkNotPolymorphicOrUnknown();
-        if (!isMaybeStrPrefixedIdentifierParts())
-            return null;
         return str.stringValue();
     }
 
@@ -2028,7 +2033,11 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         Value r = new Value(this);
         r.flags |= STR_UINT | STR_OTHERNUM | STR_IDENTIFIERPARTS | STR_OTHER;
         r.flags &= ~STR_PREFIX;
-        r.str = null;
+        if(str != null) {
+            r.str = str.leastUpperBound(AbstractString.anyString());
+        } else {
+            r.str = AbstractString.newEmptyAbstractString().leastUpperBound((AbstractString.anyString()));
+        }
         return canonicalize(r);
     }
 
@@ -2040,8 +2049,12 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         Value r = new Value(this);
         r.flags |= STR_UINT;
         r.flags &= ~STR_PREFIX;
-        r.str = null;
-        r.joinSingleStringOrPrefixString(this);
+        if(str != null) {
+            r.str = str.leastUpperBound(AbstractString.uIntString());
+        } else {
+            r.str = AbstractString.newEmptyAbstractString().leastUpperBound((AbstractString.uIntString()));
+        }
+        //r.joinSingleStringOrPrefixString(this);
         return canonicalize(r);
     }
 
@@ -2053,11 +2066,16 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         Value r = new Value(this);
         r.flags |= STR_OTHERNUM;
         r.flags &= ~STR_PREFIX;
-        r.str = null;
-        r.joinSingleStringOrPrefixString(this);
+        if(str != null) {
+            r.str = str.leastUpperBound(AbstractString.otherNumString());
+        } else {
+            r.str = AbstractString.newEmptyAbstractString().leastUpperBound((AbstractString.otherNumString()));
+        }
+        //r.joinSingleStringOrPrefixString(this);
         return canonicalize(r);
     }
 
+    // not used
     @Override
     public Value joinAnyStrIdentifier() {
         checkNotPolymorphicOrUnknown();
@@ -2071,6 +2089,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         return canonicalize(r);
     }
 
+    // no longer used
     @Override
     public Value joinAnyStrIdentifierParts() {
         checkNotPolymorphicOrUnknown();
@@ -2084,16 +2103,16 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         return canonicalize(r);
     }
 
+    // not used
     @Override
     public Value joinAnyStrOther() {
         checkNotPolymorphicOrUnknown();
         if (isMaybeStrOther())
             return this;
         Value r = new Value(this);
-        r.flags |= STR_OTHER;
         r.flags &= ~STR_PREFIX;
-        r.str = null;
-        r.joinSingleStringOrPrefixString(this);
+        r.str = r.str.leastUpperBound(AbstractString.getStringOther());
+        //r.joinSingleStringOrPrefixString(this);
         return canonicalize(r);
     }
 
@@ -2105,10 +2124,12 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         Value r = new Value(this);
         Value tmp = new Value();
         tmp.str = new AbstractString(s);
-        r.joinSingleStringOrPrefixString(tmp);
+        r.str = tmp.str.leastUpperBound(r.str);
+        //r.joinSingleStringOrPrefixString(tmp);
         return canonicalize(r);
     }
 
+    // not used
     @Override
     public Value joinPrefixedIdentifierParts(String s) {
         checkNotPolymorphicOrUnknown();
@@ -2172,6 +2193,19 @@ public final class Value implements Undef, Null, Bool, Num, Str {
      * @return true if this value is modified
      */
     private boolean joinSingleStringOrPrefixString(Value v) { // TODO: could be more precise in some cases...
+        AbstractString oldstr = str;
+        if(str != null) {
+            if (v.str != null){
+                str = str.leastUpperBound(v.getAbstractStr());
+            }
+        } else if (v.str != null) {
+            str = v.str;
+            return true;
+        } else {
+            return false;
+        }
+        return !oldstr.equals(str);
+        /*
         boolean modified = false;
         boolean this_is_prefix = (flags & STR_PREFIX) != 0;
         boolean v_is_prefix = (v.flags & STR_PREFIX) != 0;
@@ -2202,7 +2236,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                     }
                 else if (v_is_prefix) {
                     // this is a single string, v is a prefix string
-                    if (str.startsWith(v.str.stringValue())) {
+                    if (str.startsWith(v.str)) {
                         if (!Strings.isIdentifierParts(str.substring(v.str.length()).stringValue())) {
                             // last part of this does not consist of identifier-parts, so switch to fuzzy
                             switch_both_to_fuzzy = true;
@@ -2238,7 +2272,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 // this is a single/prefix string, v is not a single/prefix string
                 if ((v.flags & STR) != 0) {
                     // this is a single/prefix string, v is non-prefix fuzzy, so switch this to fuzzy
-                    String oldstr = str.stringValue();
+                    String oldstr = getStr();
                     str = null;
                     flags &= ~STR_PREFIX;
                     joinSingleStringOrPrefixStringAsFuzzyNonPrefix(oldstr, this_is_prefix);
@@ -2266,6 +2300,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
             modified = true;
         }
         return modified;
+        */
     }
 
     @Override
@@ -2274,39 +2309,27 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         if ((flags & STR_JSON) != 0)
             return true; // TODO: check that the string is really a JSON string? (true is a sound approximation)
         if (str != null) {
-            if ((flags & STR_PREFIX) != 0)
-                return s.startsWith(str.stringValue()) && Strings.isIdentifierParts(s.substring(str.length())); // e.g. s="qwerty" matches this="qw"+idparts
-            else
-                return s.equals(str);
-        } else if (Strings.isArrayIndex(s))
-            return (flags & (STR_UINT | STR_IDENTIFIERPARTS)) != 0;
-        else if (s.equals("Infinity") || s.equals("NaN"))
-            return (flags & (STR_OTHERNUM | STR_IDENTIFIER)) != 0;
-        else if (Strings.isNumber(s))
-            return (flags & STR_OTHERNUM) != 0;
-        else if (Strings.isIdentifier(s))
-            return (flags & (STR_IDENTIFIER | STR_IDENTIFIERPARTS)) != 0;
-        else if (Strings.isIdentifierParts(s))
-            return (flags & STR_IDENTIFIERPARTS) != 0;
-        else
-            return (flags & STR_OTHER) != 0;
+            return str.run(s);
+        } else {
+            return false;
+        }
     }
 
     private static Value reallyMakeAnyStr() {
         Value r = new Value();
-        r.flags |= STR_UINT | STR_OTHERNUM | STR_IDENTIFIERPARTS | STR_OTHER;
+        r.str = AbstractString.anyString();
         return canonicalize(r);
     }
 
     private static Value reallyMakeAnyStrUInt() {
         Value r = new Value();
-        r.flags |= STR_UINT;
+        r.str = AbstractString.uIntString();
         return canonicalize(r);
     }
 
     private static Value reallyMakeAnyStrNotUInt() {
         Value r = new Value();
-        r.flags |= STR_IDENTIFIER | STR_OTHER | STR_OTHERNUM;
+        r.str = AbstractString.uIntString().getComplement();
         return canonicalize(r);
     }
 

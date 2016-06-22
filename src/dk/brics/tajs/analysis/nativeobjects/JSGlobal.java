@@ -123,7 +123,8 @@ public class JSGlobal {
                 if (c.isScanning())
                     return Value.makeNone();
                 if (evalValue.isStrJSON()) {
-                    return DOMFunctions.makeAnyJSONObject(c).join(evalValue.restrictToNotStr());
+                    throw new IllegalStateException("JSON detection is not supported");
+                    // return DOMFunctions.makeAnyJSONObject(c).join(evalValue.restrictToNotStr());
                 } else if (Options.get().isUnevalizerEnabled()) {
                     CallNode evalCall = (CallNode) call.getSourceNode(); // FIXME: may not be CallNode?
                     FlowGraph currentFg = c.getFlowGraph();
