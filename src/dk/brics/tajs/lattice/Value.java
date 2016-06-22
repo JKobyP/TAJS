@@ -2029,7 +2029,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public boolean isMaybeStrOnlyUInt() {
         checkNotPolymorphicOrUnknown();
-        return str != null && str.isLessThan(AbstractString.uIntString());
+        return str != null && str.isSubset(AbstractString.uIntString());
     }
 
     @Override

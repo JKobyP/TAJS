@@ -1,4 +1,5 @@
 package edu.oakland.stringabs;
+import dk.brics.automaton.*;
 
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.BasicAutomata;
@@ -40,9 +41,9 @@ public class AbstractString implements AbstractOperations {
 // ---------------------------------------------------------------
     public static AbstractString uIntString(){
         if (uIntString == null) {
-            String uintsize = String.valueOf((long)Integer.MAX_VALUE * 2);
-            uIntString = new AbstractString(BasicAutomata.makeMinInteger("0")
-                    .intersection(BasicAutomata.makeMaxInteger(uintsize)));
+//            String uintsize = String.valueOf((long)Integer.MAX_VALUE * 2);
+            uIntString = new AbstractString(BasicAutomata.makeMinInteger("0"));
+//                    .intersection(BasicAutomata.makeMaxInteger(uintsize)));
         }
         return uIntString;
     }
@@ -128,7 +129,7 @@ public class AbstractString implements AbstractOperations {
     //---------------------------------------------------------------
     // Test this one
     //---------------------------------------------------------------
-    public boolean isLessThan(AbstractString other) {
+    public boolean isSubset(AbstractString other) {
         return other != null && dfa.equals(dfa.intersection(other.dfa));
     }
     //---------------------------------------------------------------
@@ -260,4 +261,5 @@ public class AbstractString implements AbstractOperations {
     public AbstractString getUIntString() {
         return uIntString;
     }
+
 }
