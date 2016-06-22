@@ -109,6 +109,9 @@ public class AbstractString implements AbstractOperations {
     }
 
     public AbstractString leastUpperBound(AbstractString a) {
+        if (a==null) {
+            return this;
+        }
         return new AbstractString(this.dfa.union(a.dfa));
     }
 
