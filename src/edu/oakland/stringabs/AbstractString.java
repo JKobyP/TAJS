@@ -4,6 +4,7 @@ import dk.brics.automaton.Automaton;
 import dk.brics.automaton.BasicAutomata;
 import dk.brics.automaton.BasicOperations;
 import dk.brics.automaton.RegExp;
+import dk.brics.automaton.SpecialOperations;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Set;
@@ -115,7 +116,14 @@ public class AbstractString implements AbstractOperations {
     }
 
     public AbstractString widen(AbstractString a) {
-        throw new NotImplementedException();
+        Automaton r = SpecialOperations.widen(dfa, a.dfa);
+        r.minimize();
+        if (r.equals(dfa)) {
+            return this;
+        } else {
+            return new AbstractString(r);
+        }
+
     }
 
     public boolean run(String s) {

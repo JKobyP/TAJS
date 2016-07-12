@@ -830,6 +830,7 @@ public final class UnknownValueResolver {
             v1 = getRealValue(v1, s1);
             v2 = getRealValue(v2, s2);
         }
+        v1.joinCount = s2.joinCount;
         return v1.join(v2);
     }
 
