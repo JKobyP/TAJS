@@ -200,6 +200,11 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     private AbstractString str;
 
     /**
+     * Counts how many times the Str facet has been 'joined'
+     */
+    public int joinCount;
+
+    /**
      * Property reference for polymorphic value.
      */
     private PropertyReference var; // polymorphic if non-null
@@ -256,6 +261,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         flags = 0;
         num = null;
         str = null;
+        joinCount = 0;
         object_labels = null;
         var = null;
         hashcode = 0;
@@ -268,6 +274,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         flags = v.flags;
         num = v.num;
         str = v.str;
+        joinCount = v.joinCount;
         object_labels = v.object_labels;
         var = v.var;
         hashcode = v.hashcode;
@@ -284,9 +291,9 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 + (v.object_labels != null ? v.object_labels.hashCode() : 0);
         if (Options.get().isDebugOrTestEnabled()) { // checking representation invariants
             String msg = null;
-            if ((v.flags & (STR_UINT | STR_OTHERNUM | STR_IDENTIFIER | STR_IDENTIFIERPARTS | STR_OTHER)) != 0 && v.str != null)
-                msg = "fixed string and flags inconsistent";
-            else if ((v.flags & STR_PREFIX) != 0 && (v.str == null || v.str.isEmpty()))
+//            if ((v.flags & (STR_UINT | STR_OTHERNUM | STR_IDENTIFIER | STR_IDENTIFIERPARTS | STR_OTHER)) != 0 && v.str != null)
+//                msg = "fixed string and flags inconsistent";
+            if ((v.flags & STR_PREFIX) != 0 && (v.str == null || v.str.isEmpty()))
                 msg = "prefix string inconsistent";
             else if ((v.flags & STR_IDENTIFIER) != 0 && (v.flags & STR_IDENTIFIERPARTS) != 0)
                 msg = "identifier string flags inconsistent";
@@ -1013,7 +1020,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 }
             } // otherwise, neither is a single number, so do nothing
             // strings
-            modified |= joinSingleStringOrPrefixString(v);
+            modified |= joinCount < 4 ? joinSingleStringOrPrefixString(v) : joinSingleStringWithWiden(v);
             // objects
             if (v.object_labels != null) {
                 if (object_labels == null) {
@@ -1267,6 +1274,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                     if (any)
                         b.append('|');
                     b.append(Strings.escape(str.toString()));
+                    b.append(" : " + joinCount);
                     any = true;
                 }
             }
@@ -2244,17 +2252,19 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     }
 
     /**
-     * Joins the single string or prefix string part of the given value into this value.
-     * No other parts of v are used.
-     * Also converts the existing single string or prefix string to a fuzzy value if necessary.
      *
-     * @return true if this value is modified
+     * @param v value to join with this value
+     * @param f if true, use LUB, else use widening operator
+     * @return the result of joining the two abstract string parts of the Values
      */
-    private boolean joinSingleStringOrPrefixString(Value v) { // TODO: could be more precise in some cases...
+    private boolean joinSingleStringSomehow(Value v, boolean f) {
         AbstractString oldstr = str;
         if(str != null) {
             if (v.str != null){
-                str = str.leastUpperBound(v.getAbstractStr());
+                if (f)
+                    str = str.leastUpperBound(v.getAbstractStr());
+                else
+                    str = str.widen(v.getAbstractStr());
             }
         } else if (v.str != null) {
             str = v.str;
@@ -2263,6 +2273,21 @@ public final class Value implements Undef, Null, Bool, Num, Str {
             return false;
         }
         return !oldstr.equals(str);
+    }
+
+    private boolean joinSingleStringWithWiden(Value v) {
+        return joinSingleStringSomehow(v, false);
+    }
+
+    /**
+     * Joins the single string or prefix string part of the given value into this value.
+     * No other parts of v are used.
+     * Also converts the existing single string or prefix string to a fuzzy value if necessary.
+     *
+     * @return true if this value is modified
+     */
+    private boolean joinSingleStringOrPrefixString(Value v) { // TODO: could be more precise in some cases...
+        return joinSingleStringSomehow(v, true);
         /*
         boolean modified = false;
         boolean this_is_prefix = (flags & STR_PREFIX) != 0;

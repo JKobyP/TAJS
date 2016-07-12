@@ -39,6 +39,8 @@ public class WritePropertyNode extends Node {
 
     private int value_reg;
 
+    public int visitCount;
+
     /**
      * Constructs a new write property node with variable property name.
      *
@@ -134,6 +136,7 @@ public class WritePropertyNode extends Node {
 
     @Override
     public void visitBy(NodeVisitor v) {
+        visitCount++;
         v.visit(this);
     }
 

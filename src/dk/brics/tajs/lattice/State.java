@@ -118,6 +118,8 @@ public class State implements IState<State, Context, CallEdge> {
 
     private static int number_of_makewritable_registers; // TODO: currently not used
 
+    public int joinCount;
+
     /**
      * Constructs a new none-state (representing the empty set of concrete states).
      */

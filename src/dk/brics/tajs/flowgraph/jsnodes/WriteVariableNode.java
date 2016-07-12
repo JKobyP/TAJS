@@ -31,6 +31,7 @@ public class WriteVariableNode extends Node {
     private String varname;
 
     private int value_reg;
+    public int visit_count;
 
     /**
      * Constructs a new write variable node.
@@ -69,6 +70,7 @@ public class WriteVariableNode extends Node {
 
     @Override
     public void visitBy(NodeVisitor v) {
+        visit_count++;
         v.visit(this);
     }
 
