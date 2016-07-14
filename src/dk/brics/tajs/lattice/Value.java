@@ -1020,7 +1020,8 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 }
             } // otherwise, neither is a single number, so do nothing
             // strings
-            modified |= joinCount < 4 ? joinSingleStringOrPrefixString(v) : joinSingleStringWithWiden(v);
+            modified |= joinCount < 4 && v.joinCount < 4 ? joinSingleStringOrPrefixString(v) : joinSingleStringWithWiden(v);
+//            joinCount =  ? joinCount : v.joinCount;
             // objects
             if (v.object_labels != null) {
                 if (object_labels == null) {

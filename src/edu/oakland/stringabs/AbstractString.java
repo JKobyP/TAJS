@@ -260,6 +260,7 @@ public class AbstractString implements AbstractOperations {
                 b.delete(b.length()-2,b.length()).append("]");
                 return b.toString();
             } else {
+                System.out.println(dfa.run("O"));
                 return "[Many possible strings (" + dfa.getNumberOfStates()+ " states), such as \'" + dfa.getShortestExample(true) + "\']";
             }
         }
