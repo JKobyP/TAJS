@@ -113,6 +113,9 @@ public class AbstractString implements AbstractOperations {
         if (a==null) {
             return this;
         }
+        if (a == this || a.equals(this)) {
+            return this;
+        }
         return new AbstractString(this.dfa.union(a.dfa));
     }
 

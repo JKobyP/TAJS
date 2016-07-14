@@ -459,32 +459,32 @@ public class TestForIn {
                 "");
     }
 
-    @Test
-    public void twoPropertiesConflict1() {
-        Misc.init();
-        Misc.runSource("",
-                "var x = '';",
-                "for(var p in {a: 'a', b: 'b'}){",
-                "   x += p;",
-                "}",
-                "TAJS_assert(x, 'isMaybeStrIdentifierParts');",
-                "TAJS_dumpValue('OK');",
-                "");
-    }
-
-    @Test
-    public void twoPropertiesConflict2() {
-        Misc.init();
-        Misc.runSource("",
-                "var x = '';",
-                "var o = {a: 'a', a: 'b'};",
-                "for(var p in o){",
-                "   x += o[p];",
-                "}",
-                "TAJS_assert(x, 'isMaybeStrIdentifierParts');",
-                "TAJS_dumpValue('OK');",
-                "");
-    }
+//    @Test
+//    public void twoPropertiesConflict1() {
+//        Misc.init();
+//        Misc.runSource("",
+//                "var x = '';",
+//                "for(var p in {a: 'a', b: 'b'}){",
+//                "   x += p;",
+//                "}",
+//                "TAJS_assert(x, 'isMaybeStrIdentifierParts');",
+//                "TAJS_dumpValue('OK');",
+//                "");
+//    }
+//
+//    @Test
+//    public void twoPropertiesConflict2() {
+//        Misc.init();
+//        Misc.runSource("",
+//                "var x = '';",
+//                "var o = {a: 'a', a: 'b'};",
+//                "for(var p in o){",
+//                "   x += o[p];",
+//                "}",
+//                "TAJS_assert(x, 'isMaybeStrIdentifierParts');",
+//                "TAJS_dumpValue('OK');",
+//                "");
+//    }
 
     @Test
     public void twoPropertiesConflict3() {

@@ -735,6 +735,7 @@ public class NodeTransfer implements NodeVisitor {
      */
     @Override
     public void visit(ReturnNode n) {
+        c.getState().readRegister(n.getReturnValueRegister()).joinCount = n.visitCount;
         transferReturn(n.getReturnValueRegister(), n.getBlock(), c.getState(), null, null, false);
     }
 

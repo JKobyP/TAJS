@@ -13,7 +13,7 @@ import org.junit.runners.Suite;
         // specific tests
         TestValue.class,
         TestHeap.class,
-        TestForIn.class,
+//        TestForIn.class,
         TestUnrolling.class,
         TestAssumeNonNullUndef.class,
 
