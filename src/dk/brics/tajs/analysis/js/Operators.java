@@ -29,6 +29,7 @@ import dk.brics.tajs.lattice.Str;
 import dk.brics.tajs.lattice.UnknownValueResolver;
 import dk.brics.tajs.lattice.Value;
 import dk.brics.tajs.util.Strings;
+import edu.oakland.stringabs.AbstractString;
 
 import java.util.Collection;
 import java.util.Set;
@@ -279,7 +280,7 @@ public class Operators {
     }
 
     private static Value addStrings(Str s1, Str s2, Value r) { // TODO: could be more precise in some cases...
-        r = s1.strConcatenate(s2);
+        r = s1.strConcatenate(s2,r);
         if (s1.isMaybeStrJSON() || s2.isMaybeStrJSON()) // TODO: better precision for "(" + JSON + ")"
             r = r.join(Value.makeJSONStr());
         return r;
