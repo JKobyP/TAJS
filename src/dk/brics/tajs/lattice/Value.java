@@ -2060,7 +2060,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public String getStr() {
         checkNotPolymorphicOrUnknown();
-        return str.stringValue();
+        return str != null ? str.stringValue() : null;
     }
 
     public Value strConcatenate(Str s) {
