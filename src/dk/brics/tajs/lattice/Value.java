@@ -1274,8 +1274,8 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 if (str != null) {
                     if (any)
                         b.append('|');
-                    b.append(Strings.escape(str.toString()));
-                    b.append(" : " + joinCount);
+//                    b.append(Strings.escape(str.toString()));
+                    b.append(str.toString());
                     any = true;
                 }
             }
@@ -2063,9 +2063,13 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         return str != null ? str.stringValue() : null;
     }
 
-    public Value strConcatenate(Str s) {
-        Value r = new Value(this);
+    public Value strConcatenate(Str s, Str s2) {
+//        Value r = new Value(this);
+        Value r = Value.makeNone();
         r.str = AbstractString.concat(str, s.getAbstractStr());
+        if(s2 != null && s2.getAbstractStr() != null) {
+            s2.getAbstractStr().leastUpperBound(r.str);
+        }
         return r;
     }
 

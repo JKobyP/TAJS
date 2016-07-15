@@ -240,7 +240,7 @@ public class AbstractString implements AbstractOperations {
     @Override
     public String toString() {
         if(isSingleString()) {
-            return "'" + stringValue() + "'";
+            return "\"" + stringValue() + "\"";
         } else if (equals(AbstractString.uIntString())) {
             return "[UInt string]";
         } else if (equals(AbstractString.otherNumString())) {
@@ -258,13 +258,21 @@ public class AbstractString implements AbstractOperations {
             if (derivations != null) {
                 StringBuilder b = new StringBuilder().append("[");
                 for (String s : derivations) {
-                    b.append("'" + s + "', ");
+                    b.append("\"" + s + "\", ");
                 }
-                b.delete(b.length()-2,b.length()).append("]");
+//                b.delete(b.length()-2,b.length()).append("]");
+                b.delete(b.length()-2,b.length());
+                if(b.charAt(b.length()-1) != ']') {
+                    b.append("]");
+                }
+                if(b.charAt(1) == '[') {
+                    b.deleteCharAt(1);
+                }
+
                 return b.toString();
             } else {
-                System.out.println(dfa.run("O"));
-                return "[Many possible strings (" + dfa.getNumberOfStates()+ " states), such as \'" + dfa.getShortestExample(true) + "\']";
+                System.out.println(dfa);
+                return "[Many possible strings (" + dfa.getNumberOfStates()+ " states), such as \"" + dfa.getShortestExample(true) + "\"]";
             }
         }
     }
