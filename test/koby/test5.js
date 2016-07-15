@@ -1,14 +1,65 @@
-var secretword = cond ? "enter your secret word: " : "horse";
-var one = guess("correct", secretword);
-var two = guess("horse", secretword);
-var three = guess("battery", secretword);
-var four = guess("staple", secretword);
+//var ninja = {
+//    yell: function(n){
+//        return n > 0 ? ninja.yell(n-1) + "a" : "hiy";
+//    }
+//};
+////TAJS_assert( ninja.yell(4), 'isMaybeStrIdentifierParts');
+//var x = ninja.yell(4);
+//var samurai = { yell: ninja.yell };
+//var ninja = null;
+//
+//try {
+//    samurai.yell(4);
+//} catch(e){
+//    TAJS_assert( true );
+//}
+function addMethod(object, name, fn){
+    TAJS_dumpValue(name);
+    TAJS_dumpValue(object);
+    TAJS_dumpValue(fn);
+    // Save a reference to the old method
+    var old = object[ name ];
 
-function guess(word, secret) {
-    var cond1 = word === secret;
-    if (cond1) {
-        return true;
-    } else {
-        return false;
-    }
+    // Overwrite the method with our new one
+    object[ name ] = function(){
+        // Check the number of incoming arguments,
+        // compared to our overloaded function
+        if ( fn.length == arguments.length )
+        // If there was a match, run the function
+            return fn.apply( this, arguments );
+
+        // Otherwise, fallback to the old method
+        else if ( typeof old === "function" )
+            return old.apply( this, arguments );
+    };
 }
+
+function Ninjas(){
+    var ninjas = [ "Dean Edwards", "Sam Stephenson", "Alex Russell" ];
+    addMethod(this, "find", function(){
+        return ninjas;
+    });
+    addMethod(this, "find", function(name){
+        var ret = [];
+        for ( var i = 0; i < ninjas.length; i++ )
+            if ( ninjas[i].indexOf(name) == 0 )
+                ret.push( ninjas[i] );
+        return ret;
+    });
+    addMethod(this, "find", function(first, last){
+        TAJS_dumpValue(this);
+        TAJS_dumpValue(first);
+        TAJS_dumpValue(last);
+        var ret = [];
+        for ( var i = 0; i < ninjas.length; i++ )
+            if ( ninjas[i] == (first + " " + last) )
+                ret.push( ninjas[i] );
+        return ret;
+    });
+}
+
+var ninjas = new Ninjas();
+TAJS_assert( ninjas.find().length, 'isMaybeNumUInt');
+TAJS_assert( ninjas.find("Sam").length, 'isMaybeNumUInt');
+TAJS_assert( ninjas.find("Dean", "Edwards").length, 'isMaybeNumUInt');
+TAJS_assert( ninjas.find("Alex", "X", "Russell"), 'isMaybeUndef||isMaybeObject');

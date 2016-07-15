@@ -2063,12 +2063,13 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         return str != null ? str.stringValue() : null;
     }
 
-    public Value strConcatenate(Str s, Str s2) {
+    public Value strConcatenate(Str s, Str l) {
 //        Value r = new Value(this);
-        Value r = Value.makeNone();
-        r.str = AbstractString.concat(str, s.getAbstractStr());
-        if(s2 != null && s2.getAbstractStr() != null) {
-            s2.getAbstractStr().leastUpperBound(r.str);
+        Value r = new Value((Value)l);
+        if(r.str != null) {
+            r.str.leastUpperBound(AbstractString.concat(str, s.getAbstractStr()));
+        } else {
+            r.str = AbstractString.concat(str, s.getAbstractStr());
         }
         return r;
     }
