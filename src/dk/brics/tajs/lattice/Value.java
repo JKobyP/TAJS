@@ -1239,21 +1239,23 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                         b.append('|');
                     b.append("UIntStr");
                     any = true;
-                }
-                if (isMaybeStrOtherNum()) {
+                } else if (isMaybeStrOtherNum()) {
                     if (any)
                         b.append('|');
                     b.append("NotUIntStr"); // TODO: change to NotUIntNumStr
                     any = true;
                 }
-
-                if (isMaybeStrIdentifier()) {
+                if (isMaybeSingleStr()) {
+                    if(any)
+                        b.append('|');
+                    b.append(str);
+                    any = true;
+                } else if (isMaybeStrIdentifier()) {
                     if (any)
                         b.append('|');
                     b.append("IdentStr");
                     any = true;
-                }
-                if (isMaybeStrIdentifierParts()) {
+                } else if (isMaybeStrIdentifierParts()) {
                     if (any)
                         b.append('|');
                     b.append("IdentPartsStr");
@@ -1271,13 +1273,13 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                     b.append("JSONStr");
                     any = true;
                 }
-                if (str != null) {
-                    if (any)
-                        b.append('|');
-//                    b.append(Strings.escape(str.toString()));
-                    b.append(str.toString());
-                    any = true;
-                }
+//                if (str != null && !isMaybeSingleStr()) {
+//                    if (any)
+//                        b.append('|');
+////                    b.append(Strings.escape(str.toString()));
+//                    b.append(str.toString());
+//                    any = true;
+//                }
             }
             if (object_labels != null) {
                 if (any)
@@ -1992,21 +1994,26 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public boolean isMaybeStrIdentifier() {
         checkNotPolymorphicOrUnknown();
-        return str != null && str.equals(AbstractString.getIdentifierString());
+        return str != null && str.isSubset(AbstractString.getIdentifierString());
     }
 
     // equals instead of intersection. Verified by comparing output with vanilla TAJS.
     @Override
     public boolean isMaybeStrIdentifierParts() {
         checkNotPolymorphicOrUnknown();
-        return str != null && str.equals(AbstractString.getIdentifierPartsString());
+        return str != null && str.isSubset(AbstractString.getIdentifierPartsString());
     }
 
     //no longer used
     @Override
     public boolean isMaybeStrPrefixedIdentifierParts() {
         checkNotPolymorphicOrUnknown();
-        return (flags & STR_PREFIX) != 0;
+        return isMaybeStrIdentifierParts();
+//        return (flags & STR_PREFIX) != 0;
+    }
+
+    public boolean isMaybeManyStrings() {
+        return str != null && str.getDfa().getFiniteStrings(1) == null;
     }
 
     @Override
