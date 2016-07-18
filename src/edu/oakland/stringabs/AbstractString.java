@@ -260,14 +260,14 @@ public class AbstractString implements AbstractOperations {
                 for (String s : derivations) {
                     b.append("\"" + s + "\", ");
                 }
-//                b.delete(b.length()-2,b.length()).append("]");
-                b.delete(b.length()-2,b.length());
-                if(b.charAt(b.length()-1) != ']') {
-                    b.append("]");
-                }
-                if(b.charAt(1) == '[') {
-                    b.deleteCharAt(1);
-                }
+                b.delete(b.length()-2,b.length()).append("]");
+//                b.delete(b.length()-2,b.length());
+//                if(b.charAt(b.length()-1) != ']') {
+//                    b.append("]");
+//                }
+//                if(b.charAt(1) == '[') {
+//                    b.deleteCharAt(1);
+//                }
 
                 return b.toString();
             } else {
