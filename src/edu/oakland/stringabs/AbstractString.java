@@ -162,6 +162,9 @@ public class AbstractString implements AbstractOperations {
     public String stringValue(){
         Set<String> language = dfa.getFiniteStrings(1); // gets finite strings, returns null if there are more than 1.
         if (language != null && language.size() == 1) { // We use this instead of getSingleton because getSingleton's
+            if (!language.contains("") && dfa.run("")) {
+                return null;
+            }
             return language.iterator().next();          // return value depends on the form of the dfa
         }
         return null;

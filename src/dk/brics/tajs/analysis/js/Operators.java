@@ -280,6 +280,8 @@ public class Operators {
     }
 
     private static Value addStrings(Str s1, Str s2, Value r) { // TODO: could be more precise in some cases...
+        if(s1.isNotStr() || s2.isNotStr())
+            return r;
         r = s1.strConcatenate(s2,r);
         if (s1.isMaybeStrJSON() || s2.isMaybeStrJSON()) // TODO: better precision for "(" + JSON + ")"
             r = r.join(Value.makeJSONStr());

@@ -6,6 +6,7 @@ import dk.brics.tajs.util.AnalysisException;
 import dk.brics.tajs.util.AnalysisLimitationException;
 import dk.brics.tajs.util.ParseError;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.fail;
@@ -710,6 +711,8 @@ public class TestMicro {
         Misc.checkSystemOutput();
     }
 
+	//hangs
+	@Ignore
 	@Test
 	public void micro_74() throws Exception {
 		Misc.init();

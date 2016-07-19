@@ -1233,6 +1233,11 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                     b.append('|');
                 b.append("Str");
                 any = true;
+            } else if (isMaybeSingleStr()) {
+                if(any)
+                b.append('|');
+                b.append(str);
+                any = true;
             } else {
                 if (isMaybeStrUInt()) {
                     if (any)
@@ -1245,12 +1250,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                     b.append("NotUIntStr"); // TODO: change to NotUIntNumStr
                     any = true;
                 }
-                if (isMaybeSingleStr()) {
-                    if(any)
-                        b.append('|');
-                    b.append(str);
-                    any = true;
-                } else if (isMaybeStrIdentifier()) {
+                if (isMaybeStrIdentifier()) {
                     if (any)
                         b.append('|');
                     b.append("IdentStr");
@@ -1969,7 +1969,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public boolean isMaybeStrUInt() {
         checkNotPolymorphicOrUnknown();
-        return str != null && str.equals(AbstractString.uIntString());
+        return str != null && str.hasIntersection(AbstractString.uIntString());
     }
 
     @Override
@@ -1994,14 +1994,16 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public boolean isMaybeStrIdentifier() {
         checkNotPolymorphicOrUnknown();
-        return str != null && str.isSubset(AbstractString.getIdentifierString());
+        return str != null && str.hasIntersection(AbstractString.getIdentifierString());
     }
 
     // equals instead of intersection. Verified by comparing output with vanilla TAJS.
     @Override
     public boolean isMaybeStrIdentifierParts() {
         checkNotPolymorphicOrUnknown();
-        return str != null && str.isSubset(AbstractString.getIdentifierPartsString());
+        return str != null  && !str.isSubset(AbstractString.getIdentifierString())
+                            && !str.isSubset(AbstractString.uIntString())
+                            && str.isSubset(AbstractString.getIdentifierPartsString());
     }
 
     //no longer used
@@ -2019,7 +2021,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public boolean isMaybeStrOther() {
         checkNotPolymorphicOrUnknown();
-        return str != null && str.equals(AbstractString.getStringOther());
+        return str != null && str.isSubset(AbstractString.getStringOther());
     }
 
     @Override
@@ -2095,7 +2097,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public boolean isNotStr() {
         checkNotPolymorphicOrUnknown();
-        return (flags & STR) == 0 && str == null;
+        return str == null;
     }
 
     @Override
@@ -2123,7 +2125,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public Value joinAnyStrUInt() {
         checkNotPolymorphicOrUnknown();
-        if (isMaybeStrUInt())
+        if (str != null && str.equals(AbstractString.uIntString()))
             return this;
         Value r = new Value(this);
         r.flags |= STR_UINT;
