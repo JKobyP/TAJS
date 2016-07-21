@@ -1238,7 +1238,13 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 b.append('|');
                 b.append(str);
                 any = true;
-            } else {
+            } else if (str != null) {
+                if(any)
+                    b.append('|');
+                b.append(str);
+                any = true;
+            }
+            else {
                 if (isMaybeStrUInt()) {
                     if (any)
                         b.append('|');
@@ -2039,13 +2045,13 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     @Override
     public boolean isStrIdentifierOrIdentifierParts() {
         checkNotPolymorphicOrUnknown();
-        return getAbstractStr().isSubset((AbstractString.getIdentifierPartsString()));
+        return str != null && str.isSubset((AbstractString.getIdentifierPartsString()));
     }
 
     @Override
     public boolean isStrIdentifier() {
         checkNotPolymorphicOrUnknown();
-        return getAbstractStr().isSubset(AbstractString.getIdentifierString());
+        return str != null && str.isSubset(AbstractString.getIdentifierString());
     }
 
     @Override
