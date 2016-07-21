@@ -4,6 +4,7 @@ import dk.brics.tajs.Main;
 import dk.brics.tajs.options.Options;
 import dk.brics.tajs.test.Misc;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 @SuppressWarnings("static-method")
@@ -51,6 +52,8 @@ public class JSString_splitTest {
                 "TAJS_assert(v.length === 2);");
     }
 
+    //hangs
+    @Ignore
     @Test
     public void jsstring_split_knownStringsAndUnknownLimit() {
         Misc.init();

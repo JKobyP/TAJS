@@ -190,6 +190,8 @@ public class Test1K2014Dragons {
         Misc.checkSystemOutput();
     }
 
+    // hangs
+    @Ignore
     @Test
     public void test1k_2014_dragons_1709() {
         Misc.init();
@@ -746,6 +748,8 @@ public class Test1K2014Dragons {
         Misc.checkSystemOutput();
     }
 
+    //hangs
+    @Ignore
     @Test(expected = AnalysisLimitationException.class /* eval precision */)
     public void test1k_2014_dragons_1964() {
         Misc.init();
@@ -765,6 +769,8 @@ public class Test1K2014Dragons {
         Misc.checkSystemOutput();
     }
 
+    //hangs
+    @Ignore
     @Test
     public void test1k_2014_dragons_1969() {
         Misc.init();

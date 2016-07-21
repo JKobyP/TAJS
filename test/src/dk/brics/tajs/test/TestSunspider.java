@@ -137,6 +137,7 @@ public class TestSunspider {
 		fail(); // Misc.checkSystemOutput();
 	}
 
+	@Ignore //hangs
 	@Test
 	public void sunspider_crypto_md5() throws Exception { 
 		Misc.init();
@@ -146,6 +147,7 @@ public class TestSunspider {
 		Misc.checkSystemOutput();
 	}
 
+	@Ignore //hangs
 	@Test
 	public void sunspider_crypto_sha1() throws Exception {
 		Misc.init();
@@ -221,6 +223,8 @@ public class TestSunspider {
 		Misc.checkSystemOutput();
 	}
 
+	//hangs
+	@Ignore
 	@Test
 	public void sunspider_string_fasta() throws Exception { 
 		Misc.init();

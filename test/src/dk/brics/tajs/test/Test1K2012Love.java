@@ -185,6 +185,8 @@ public class Test1K2012Love {
         Misc.checkSystemOutput();
     }
 
+    //hangs
+    @Ignore
     @Test
     public void test1k_2012_love_1048() {
         Misc.init();
@@ -330,6 +332,8 @@ public class Test1K2012Love {
         Misc.checkSystemOutput();
     }
 
+    //hangs
+    @Ignore
     @Test
     public void test1k_2012_love_1095() {
         Misc.init();
@@ -339,6 +343,8 @@ public class Test1K2012Love {
         Misc.checkSystemOutput();
     }
 
+    //hangs
+    @Ignore
     @Test
     public void test1k_2012_love_1102() {
         Misc.init();
@@ -458,6 +464,8 @@ public class Test1K2012Love {
         Misc.checkSystemOutput();
     }
 
+    //hangs
+    @Ignore
     @Test
     public void test1k_2012_love_1156() {
         Misc.init();
@@ -670,6 +678,8 @@ public class Test1K2012Love {
         Misc.checkSystemOutput();
     }
 
+    //hangs
+    @Ignore
     @Test
     public void test1k_2012_love_1218() {
         Misc.init();
@@ -853,6 +863,8 @@ public class Test1K2012Love {
         Misc.checkSystemOutput();
     }
 
+    //hangs
+    @Ignore
     @Test
     public void test1k_2012_love_1265() {
         Misc.init();

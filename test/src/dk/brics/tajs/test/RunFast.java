@@ -11,7 +11,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         // specific tests
-        TestValue.class,
+//        TestValue.class,
         TestHeap.class,
 //        TestForIn.class,
         TestUnrolling.class,

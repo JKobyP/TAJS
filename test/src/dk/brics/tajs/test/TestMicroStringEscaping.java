@@ -3,6 +3,7 @@ package dk.brics.tajs.test;
 import dk.brics.tajs.Main;
 import dk.brics.tajs.options.Options;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -72,6 +73,8 @@ public class TestMicroStringEscaping {
         Misc.run(new String[]{"test/micro/stringReplace_withBackslashes.js"});
     }
 
+    //hangs
+    @Ignore
     @Test
     public void stringWithBackslashes() {
         Misc.init();

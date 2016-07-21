@@ -14,6 +14,7 @@ import dk.brics.tajs.options.Options;
 import dk.brics.tajs.test.monitors.OrdinaryExitReachableCheckerMonitor;
 import dk.brics.tajs.util.Collections;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Set;
@@ -39,26 +40,36 @@ public class TestLiteralContextSensitivity {
         test("o", none, "var o ; function f(p1, p2){o = {x: 'A'};}; f();");
     }
 
+    //hangs
+    @Ignore
     @Test
     public void oneDep() {
         test("o", set("x"), "var o ; function f(p1, p2){o = {x: p1};}; f('x');");
     }
 
+    //hangs
+    @Ignore
     @Test
     public void twoDep() {
         test("o", set("x", "y"), "var o ; function f(p1, p2){o = {x: p1, y: p2};}; f('x', 'y');");
     }
 
+    //hangs
+    @Ignore
     @Test
     public void dependOnOneGetAll() {
         test("o", set("x", "y"), "var o ; function f(p1, p2){o = {x: p1};}; f('x', 'y');");
     }
 
+    //hangs
+    @Ignore
     @Test
     public void dependOnTwoGetOne() {
         test("o", set("x"), "var o ; function f(p1, p2){o = {x: p1, y: p2};}; var y = Math.random()? 'y1': 'y2'; f('x', y);");
     }
 
+    //hangs
+    @Ignore
     @Test
     public void forIn() {
         test("o", set("x"), "var o ; function f(p1, p2){for(v in {x: 43}){o = {};}}; f('x');");
