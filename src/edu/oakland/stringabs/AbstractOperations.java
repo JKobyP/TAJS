@@ -17,7 +17,7 @@ import java.util.Iterator;
  */
 public interface AbstractOperations {
     AbstractString concat(AbstractString s);
-    AbstractString contains(char c);
+    boolean contains(char c);
 
     boolean isSubset(AbstractString s);
     AbstractString intersect(AbstractString s);

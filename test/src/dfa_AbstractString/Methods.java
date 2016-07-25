@@ -12,6 +12,15 @@ import static org.junit.Assert.assertEquals;
 public class Methods {
 
     @Test
+    public void contains_test() {
+        AbstractString container = AbstractString.anyString();
+        AbstractString just_ab = new AbstractString("ab");
+
+        assertEquals(true, container.contains('z'));
+        assertEquals(false, just_ab.contains('z'));
+    }
+
+    @Test
     public void AbstractString_string_test() {
         AbstractString accept_ab = new AbstractString("ab");
 

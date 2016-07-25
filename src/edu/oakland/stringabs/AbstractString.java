@@ -210,12 +210,11 @@ public class AbstractString implements AbstractOperations {
         return this;
     }
 
-    public AbstractString contains(char c) {
-        return new AbstractString(
-                BasicOperations.intersection(dfa,
-                BasicAutomata.makeAnyString()
-                             .concatenate(BasicAutomata.makeChar(c)
-                             .concatenate(BasicAutomata.makeAnyString()))));
+    // TODO: Change to Abstract Boolean
+    public boolean contains(char c) {
+        return !(BasicOperations.intersection(dfa, BasicAutomata.makeAnyString()
+                        .concatenate(BasicAutomata.makeChar(c))
+                        .concatenate(BasicAutomata.makeAnyString())).equals(Automaton.makeEmpty()));
     }
 
     public AbstractString getComplement() {
