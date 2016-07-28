@@ -497,7 +497,7 @@ public class NodeTransfer implements NodeVisitor {
         }
         // get the value to be written
         Value v = c.getState().readRegister(n.getValueRegister());
-        v.joinCount = n.visitCount;
+        v.joinCount = n.visitCount; //Picker & Maldonado
         NativeFunctions.updateArrayLength(n, objlabels, propertystr, v, c);
         // write the object property value, as fixed property name or unknown property name, and separately for "undefined"/"null"/"NaN"
         pv.writeProperty(objlabels, propertystr, v, true, maybe_undef || maybe_null || maybe_nan);
@@ -735,7 +735,7 @@ public class NodeTransfer implements NodeVisitor {
      */
     @Override
     public void visit(ReturnNode n) {
-        c.getState().readRegister(n.getReturnValueRegister()).joinCount = n.visitCount;
+        c.getState().readRegister(n.getReturnValueRegister()).joinCount = n.visitCount; //Picker & Maldonado
         transferReturn(n.getReturnValueRegister(), n.getBlock(), c.getState(), null, null, false);
     }
 
@@ -934,7 +934,7 @@ public class NodeTransfer implements NodeVisitor {
                     Value returnValue = c.getState().hasReturnRegisterValue() ? c.getState().readRegister(AbstractNode.RETURN_REG) : null;
                     Value exValue = c.getState().hasExceptionRegisterValue() ? c.getState().readRegister(AbstractNode.EXCEPTION_REG) : null;
                     returnValue = UserFunctionCalls.mergeFunctionReturn(nonSpecializedMergeState, beginState, edgeState, beginEntryState, nonSpecializedMergeState.getSummarized(), returnValue, exValue);
-                    nonSpecializedMergeState.joinCount = n.visitCount;
+                    nonSpecializedMergeState.joinCount = n.visitCount; // Picker & Maldonado
                     if (returnValue != null) {
                         nonSpecializedMergeState.writeRegister(AbstractNode.RETURN_REG, returnValue);
                     }

@@ -279,7 +279,10 @@ public class Operators {
         return r;
     }
 
-    private static Value addStrings(Str s1, Str s2, Value r) { // TODO: could be more precise in some cases...
+    /**
+     * Concatenates two strings, joins that value to r
+     */
+    private static Value addStrings(Str s1, Str s2, Value r) {
         if(s1.isNotStr() || s2.isNotStr())
             return r;
         r = s1.strConcatenate(s2,r);

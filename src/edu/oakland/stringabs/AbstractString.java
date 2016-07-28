@@ -1,5 +1,4 @@
 package edu.oakland.stringabs;
-import dk.brics.automaton.*;
 
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.BasicAutomata;
@@ -20,6 +19,7 @@ public class AbstractString implements AbstractOperations {
     private static AbstractString otherNumString;
     private static AbstractString anyNumberString;
     private static AbstractString empty;
+    private static AbstractString emptyString;
     private static AbstractString identifierString;
     private static AbstractString identifierPartsString;
     private static AbstractString stringOther;
@@ -31,7 +31,14 @@ public class AbstractString implements AbstractOperations {
         return empty;
     }
 
-    public static AbstractString anyString(){
+    public static AbstractString getEmptyString() {
+        if (emptyString == null) {
+            emptyString = new AbstractString(BasicAutomata.makeEmptyString());
+        }
+        return emptyString;
+    }
+
+    public static AbstractString getAnyString(){
         if (anyString == null) {
             anyString = new AbstractString(BasicAutomata.makeAnyString());
         }
@@ -51,7 +58,7 @@ public class AbstractString implements AbstractOperations {
 
     public static AbstractString otherNumString() {
         if(otherNumString == null) {
-            otherNumString = getAnyNumberString().intersect(uIntString().getComplement());
+            otherNumString = getAnyNumberString().intersect(uIntString().complement());
         }
         return otherNumString;
     }
@@ -61,10 +68,6 @@ public class AbstractString implements AbstractOperations {
             anyNumberString = new AbstractString(new RegExp("\\-?(([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+]?[0-9]+)?|Infinity)|NaN").toAutomaton(true));
         }
         return anyNumberString;
-    }
-
-    public static AbstractString getAnyString() {
-        return anyString;
     }
 
     // FIXME: Incredibly expensive
@@ -91,7 +94,7 @@ public class AbstractString implements AbstractOperations {
 
     public static AbstractString getStringOther() {
         if (stringOther == null) {
-            stringOther = getAnyNumberString().leastUpperBound(getIdentifierPartsString()).getComplement();
+            stringOther = getAnyNumberString().leastUpperBound(getIdentifierPartsString()).complement();
         }
         return stringOther;
     }
@@ -134,6 +137,9 @@ public class AbstractString implements AbstractOperations {
         return dfa.run(s);
     }
 
+    public String getCommonPrefix() {
+        return dfa.getCommonPrefix();
+    }
     /**
      * Corresponds to the partial ordering on our abstract domain
      * Our notion of less-than corresponds to language subset, ie.
@@ -179,22 +185,20 @@ public class AbstractString implements AbstractOperations {
      * @param s
      */
     public boolean equals(String s) {
-        return s.equals(stringValue());
+        return dfa.run(s);
     }
 
     @Override
     public boolean equals(Object o) {
-        if(o instanceof AbstractString) {
-            return this.equals((AbstractString)o);
-        } else {
+        if(o == null || !(o instanceof AbstractString))
             return false;
-        }
+
+        return this.equals((AbstractString)o);
     }
 
     public boolean equals(AbstractString s){
         return dfa.equals(s.dfa);
     }
-    // Abstract Operations
 
     public static AbstractString concat(AbstractString a, AbstractString b) {
         if (a==null) {
@@ -218,20 +222,14 @@ public class AbstractString implements AbstractOperations {
                              .concatenate(BasicAutomata.makeAnyString()))));
     }
 
-    public AbstractString getComplement() {
+    public AbstractString complement() {
         return new AbstractString(BasicOperations.complement(dfa));
     }
-
-    public int length() {return dfa.getNumberOfStates();}
 
     //---------------------------------------------------------------
     // Will fail until implementation
     //---------------------------------------------------------------
-    public boolean startsWith(AbstractString s) {
-        throw new NotImplementedException();
-    }
     public char charAt(int i) { throw new NotImplementedException();}
-
     public AbstractString substring(int b, int e){
         throw new NotImplementedException();
     }
@@ -245,17 +243,19 @@ public class AbstractString implements AbstractOperations {
         if(isSingleString()) {
             return "\"" + stringValue() + "\"";
         } else if (equals(AbstractString.uIntString())) {
-            return "[UInt string]";
+            return "UIntStr";
         } else if (equals(AbstractString.otherNumString())) {
-            return "[Other number string]";
+            return "NotUIntStr";
         } else if (equals(AbstractString.getAnyNumberString())) {
-            return "[Any number string]";
-        } else if (equals(getIdentifierPartsString()) || equals(getIdentifierString())) {
-            return "[Identifier parts string]";
+            return "AnyNumStr";
+        } else if (equals(getIdentifierString())) {
+            return "IdentStr";
+        } else if (equals(getIdentifierPartsString())) {
+            return "IdentPartsStr";
         } else if (equals(getStringOther())) {
-            return "[String other]";
+            return "StrOther";
         } else if (equals(getAnyString())){
-            return "[Any string]";
+            return "Str";
         } else {
             Set<String> derivations = dfa.getFiniteStrings(10);
             if (derivations != null) {

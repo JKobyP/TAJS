@@ -159,11 +159,6 @@ public interface Str {
     Value joinStr(String v);
 
     /**
-     * Constructs a value as the join of this value and the given prefixed identifier-parts string.
-     */
-    Value joinPrefixedIdentifierParts(String v);
-
-    /**
      * Constructs a value from this value where only the string facet is considered.
      */
     Value restrictToStr();
