@@ -30,8 +30,8 @@ public class Test10K {
         monitoring = CompositeMonitoring.buildFromList(new Monitoring(), new OrdinaryExitReachableCheckerMonitor());
 	}
 
-    //hangs
-    @Ignore
+    //hangs // Picker & Maldonado
+    @Ignore // Picker & Maldonado
     @Test
     public void test10k_10k_snake() throws Exception {
         Options.get().enablePolyfillMDN();
@@ -42,8 +42,8 @@ public class Test10K {
         Misc.checkSystemOutput();
     }
 
-    //hangs
-    @Ignore
+    //hangs // Picker & Maldonado
+    @Ignore // Picker & Maldonado
     @Test
     public void test10k_10k_world() throws Exception {
         Misc.init();
@@ -72,8 +72,8 @@ public class Test10K {
         Misc.checkSystemOutput();
     }
 
-    //hangs
-    @Ignore
+    //hangs // Picker & Maldonado
+    @Ignore // Picker & Maldonado
     @Test
     public void test10k_canvas_aquarium() throws Exception {
         Misc.init();
@@ -101,7 +101,7 @@ public class Test10K {
         Misc.checkSystemOutput();
     }
 
-    // Hangs 2min 21s (but eventually completes (and fails))
+    // Hangs 2min 21s (but eventually completes (and fails))// Picker & Maldonado
     @Ignore
     @Test
     public void test10k_filterrific() throws Exception {
@@ -150,8 +150,8 @@ public class Test10K {
         Misc.checkSystemOutput();
     }
 
-    //hangs
-    @Ignore
+    //hangs // Picker & Maldonado
+    @Ignore // Picker & Maldonado
     @Test
     public void test10k_heatmap() throws Exception {
         Misc.init();

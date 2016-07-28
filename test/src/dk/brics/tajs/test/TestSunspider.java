@@ -137,7 +137,7 @@ public class TestSunspider {
 		fail(); // Misc.checkSystemOutput();
 	}
 
-	@Ignore //hangs
+	@Ignore //hangs // Picker & Maldonado // Picker & Maldonado
 	@Test
 	public void sunspider_crypto_md5() throws Exception { 
 		Misc.init();
@@ -147,7 +147,7 @@ public class TestSunspider {
 		Misc.checkSystemOutput();
 	}
 
-	@Ignore //hangs
+	@Ignore //hangs // Picker & Maldonado
 	@Test
 	public void sunspider_crypto_sha1() throws Exception {
 		Misc.init();
@@ -223,7 +223,7 @@ public class TestSunspider {
 		Misc.checkSystemOutput();
 	}
 
-	//hangs
+	//hangs // Picker & Maldonado
 	@Ignore
 	@Test
 	public void sunspider_string_fasta() throws Exception { 

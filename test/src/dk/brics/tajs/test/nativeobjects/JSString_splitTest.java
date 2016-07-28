@@ -52,7 +52,7 @@ public class JSString_splitTest {
                 "TAJS_assert(v.length === 2);");
     }
 
-    //hangs
+    //hangs // Picker & Maldonado
     @Ignore
     @Test
     public void jsstring_split_knownStringsAndUnknownLimit() {

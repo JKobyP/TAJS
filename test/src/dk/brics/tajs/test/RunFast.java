@@ -11,9 +11,9 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         // specific tests
-//        TestValue.class,
+//        TestValue.class, // Picker & Maldonado
         TestHeap.class,
-//        TestForIn.class,
+//        TestForIn.class, // Picker & Maldonado
         TestUnrolling.class,
         TestAssumeNonNullUndef.class,
 

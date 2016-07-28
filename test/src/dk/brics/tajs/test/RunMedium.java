@@ -44,7 +44,7 @@ import org.junit.runners.Suite;
         Test1K2014Dragons.class,
         TestKaistAlexaBenchmarksFlowgraph.class,
         TestJQueryPatterns.class,
-//        TestJQueryLoad.class,
+//        TestJQueryLoad.class, // Picker & Maldonado
 })
 public class RunMedium {
 

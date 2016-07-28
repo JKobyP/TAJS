@@ -37,7 +37,7 @@ public class TestChromeExperiments {
         Misc.checkSystemOutput();
     }
 
-    // Hangs due to really long strings
+    // Hangs due to really long strings// Picker & Maldonado
     @Ignore
     @Test
     public void chrome_anotherworld() throws Exception {
@@ -187,8 +187,8 @@ public class TestChromeExperiments {
         Misc.checkSystemOutput();
     }
 
-    //hangs
-    @Ignore
+    //hangs // Picker & Maldonado
+    @Ignore // Picker & Maldonado
     @Test
     public void chrome_keylight() throws Exception {
         Misc.init();
@@ -243,8 +243,8 @@ public class TestChromeExperiments {
         Misc.checkSystemOutput();
     }
 
-    // hangs
-    @Ignore
+    // hangs // Picker & Maldonado
+    @Ignore // Picker & Maldonado
     @Test
     public void chrome_raytracer() throws Exception {
         Misc.init();
@@ -255,8 +255,8 @@ public class TestChromeExperiments {
         Misc.checkSystemOutput();
     }
 
-    //hangs
-    @Ignore
+    //hangs // Picker & Maldonado
+    @Ignore // Picker & Maldonado
     @Test
     public void chrome_sandtrap() throws Exception {
         Misc.init();

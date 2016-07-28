@@ -73,7 +73,7 @@ public class TestMicroStringEscaping {
         Misc.run(new String[]{"test/micro/stringReplace_withBackslashes.js"});
     }
 
-    //hangs
+    //hangs // Picker & Maldonado
     @Ignore
     @Test
     public void stringWithBackslashes() {

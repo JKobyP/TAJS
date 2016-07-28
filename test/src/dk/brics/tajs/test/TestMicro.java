@@ -6,6 +6,7 @@ import dk.brics.tajs.util.AnalysisException;
 import dk.brics.tajs.util.AnalysisLimitationException;
 import dk.brics.tajs.util.ParseError;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.fail;
@@ -481,16 +482,14 @@ public class TestMicro {
 		Misc.checkSystemOutput();
 	}
 
+	@Ignore // Picker & Maldonado
 	@Test
 	public void micro_50() throws Exception {
-		return;
-		/*
 		Misc.init();
 		Misc.captureSystemOutput();
 		String[] args = {"test/micro/test50.js"};
 		Misc.run(args);
 		Misc.checkSystemOutput();
-		*/
 	}
 
 	@Test
@@ -1820,28 +1819,24 @@ public class TestMicro {
 		Misc.checkSystemOutput();
 	}
 
+	@Ignore // Picker & Maldonado
 	@Test
 	public void micro_201() throws Exception {
-		return;
-		/*
 		Misc.init();
 		Misc.captureSystemOutput();
 		String[] args = {"test/micro/test201.js"};
 		Misc.run(args);
 		Misc.checkSystemOutput();
-		*/
 	}
 
+	@Ignore // Picker & Maldonado
 	@Test
 	public void micro_202() throws Exception {
-		return;
-		/*
 		Misc.init();
 		Misc.captureSystemOutput();
 		String[] args = {"test/micro/test202.js"};
 		Misc.run(args);
 		Misc.checkSystemOutput();
-		*/
 	}
 
 	@Test
@@ -1871,17 +1866,15 @@ public class TestMicro {
 		Misc.run(args);
 	}
 
+	@Ignore // Picker & Maldonado
 	@Test
 	public void micro_206() throws Exception {
-		return;
-		/*
 		Misc.init();
 		Options.get().enableLoopUnrolling(100);
 		Misc.captureSystemOutput();
 		String[] args = {"test/micro/test206.js"};
 		Misc.run(args);
 		Misc.checkSystemOutput();
-		*/
 	}
 
 	@Test
@@ -2050,149 +2043,135 @@ public class TestMicro {
 		Misc.checkSystemOutput();
 	}
 
+	@Ignore // Picker & Maldonado
 	@Test
 	public void micro_testForIn1() throws Exception {
-		return; /*
 		Misc.init();
 		Misc.captureSystemOutput();
 		String[] args = {"test/micro/testForIn1.js"};
 		Misc.run(args);
 		Misc.checkSystemOutput();
-		*/
 	}
 
+	@Ignore // Picker & Maldonado
 	@Test
 	public void micro_testForIn2() throws Exception {
-		return; /*
 		Misc.init();
         Misc.captureSystemOutput();
 		String[] args = {"test/micro/testForIn2.js"};
 		Misc.run(args);
 		Misc.checkSystemOutput();
-		*/
 	}
 
+	@Ignore // Picker & Maldonado
     @Test
     public void micro_testForIn2simple() throws Exception {
-    	return; /*
         Misc.init();
         Misc.captureSystemOutput();
         String[] args = {"test/micro/testForIn2simple.js"};
         Misc.run(args);
         Misc.checkSystemOutput();
-        */
     }
 
+	@Ignore // Picker & Maldonado
 	@Test
 	public void micro_testForIn3() throws Exception {
-		return; /*
 		Misc.init();
 		Misc.captureSystemOutput();
 		String[] args = { "test/micro/testForIn3.js" };
 		Misc.run(args);
 		Misc.checkSystemOutput();
-		*/
 	}
 
+	@Ignore // Picker & Maldonado
 	@Test
 	public void micro_testForIn4() throws Exception {
-		return; /*
 		Misc.init();
 		Misc.captureSystemOutput();
 		String[] args = { "test/micro/testForIn4.js" };
 		Misc.run(args);
 		Misc.checkSystemOutput();
-		*/
 	}
 
+	@Ignore // Picker & Maldonado
 	@Test
 	public void micro_testForIn5() throws Exception {
-		return; /*
 		Misc.init();
 		Misc.captureSystemOutput();
 		String[] args = { "test/micro/testForIn5.js" };
 		Misc.run(args);
 		Misc.checkSystemOutput();
-		*/
 	}
 
+	@Ignore // Picker & Maldonado
 	@Test
 	public void micro_testForIn6() throws Exception {
-		return; /*
 		Misc.init();
 		Misc.captureSystemOutput();
 		String[] args = { "test/micro/testForIn6.js" };
 		Misc.run(args);
 		Misc.checkSystemOutput();
-		*/
 	}
 
+	@Ignore // Picker & Maldonado
 	@Test
 	public void micro_testForIn7() throws Exception {
-		return; /*
 		Misc.init();
 		Misc.captureSystemOutput();
 		String[] args = { "test/micro/testForIn7.js" };
 		Misc.run(args);
 		Misc.checkSystemOutput();
-		*/
 	}
 
+	@Ignore // Picker & Maldonado
     @Test
     public void micro_testForIn8() throws Exception {
-    	return; /*
         Misc.init();
         Misc.captureSystemOutput();
         String[] args = { "test/micro/testForIn8.js" };
         Misc.run(args);
         Misc.checkSystemOutput();
-        */
     }
 
+	@Ignore // Picker & Maldonado
 	@Test
 	public void micro_testForInHasOwn() throws Exception {
-		return; /*
 		Misc.init();
 		String[] args = { "test/micro/testForInHasOwn.js" };
 		Misc.run(args);
-		*/
 	}
 
+	@Ignore // Picker & Maldonado
     @Test
     public void micro_testForInException() throws Exception {
-    	return; /*
         Misc.init();
         Options.get().enableFlowgraph();
         String[] args = { "test/micro/testForInException.js" };
         Misc.run(args);
-        */
     }
 
+	@Ignore // Picker & Maldonado
 	@Test
 	public void micro_testForInPrototypeProperties() throws Exception {
-		return; /*
 		Misc.init();
 		String[] args = { "test/micro/testForInPrototypeProperties.js" };
 		Misc.run(args);
-		*/
 	}
 
+	@Ignore // Picker & Maldonado
 	@Test
 	public void micro_testForInNoEnumerablePrototypeProperties() throws Exception {
-		return; /*
 		Misc.init();
 		String[] args = { "test/micro/testForInNoEnumerablePrototypeProperties.js" };
 		Misc.run(args);
-		*/
 	}
 
+	@Ignore // Picker & Maldonado
     @Test
 	public void micro_testForInEach() throws Exception {
-		return; /*
 		Misc.init();
 		String[] args = {"test/micro/testForInEach.js"};
 		Misc.run(args);
-		*/
 	}
 
 	@Test
@@ -2880,10 +2859,9 @@ public class TestMicro {
 		Misc.run(args);
 	}
 
+	@Ignore // Picker & Maldonado
 	@Test // Regression for GitHub issue #236
 	public void absentPresentRecovery_regression() {
-		return;
-		/*
 		Main.reset();
 		Options.get().enableTest();
 		Options.get().enableContextSensitiveHeap();
@@ -2893,7 +2871,6 @@ public class TestMicro {
 		Misc.init();
 		String[] args = {"test/micro/absent-present.js"};
 		Misc.run(args);
-		*/
 	}
 
 	@Test

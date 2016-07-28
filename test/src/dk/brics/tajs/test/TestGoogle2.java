@@ -64,8 +64,8 @@ public class TestGoogle2 {
 		Misc.checkSystemOutput();
 	}
 
-	// hangs
-	@Ignore
+	// hangs // Picker & Maldonado
+	@Ignore // Picker & Maldonado
 	@Test
 	public void google2_regexp() throws Exception {
 		Misc.init();

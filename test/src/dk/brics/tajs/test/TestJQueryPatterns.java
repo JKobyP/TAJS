@@ -39,24 +39,24 @@ public class TestJQueryPatterns {
         Misc.run(new String[]{"test/jquery-patterns/jquery-1.11_each.js", "test/jquery-patterns/jQuery-1.11_each_arrayIterationClosure.js"}, monitor);
     }
 
-    //hangs
-    @Ignore
+    //hangs // Picker & Maldonado
+    @Ignore // Picker & Maldonado
     @Test
     public void jQuery111_each_objectIterationClosure() {
         Misc.init();
         Misc.run(new String[]{"test/jquery-patterns/jquery-1.11_each.js", "test/jquery-patterns/jquery-1.11_each_objectIterationClosure.js"}, monitor);
     }
 
-    //hangs
-    @Ignore
+    //hangs // Picker & Maldonado
+    @Ignore // Picker & Maldonado
     @Test
     public void jQuery111_each_nestedObjectCreationIterationClosure() {
         Misc.init();
         Misc.run(new String[]{"test/jquery-patterns/jquery-1.11_each.js", "test/jquery-patterns/jquery-1.11_each_nestedObjectCreationIterationClosure.js"}, monitor);
     }
 
-    //hangs
-    @Ignore
+    //hangs // Picker & Maldonado
+    @Ignore // Picker & Maldonado
     @Test
     public void jQuery111_each_jQuery17_arrayMutation() {
         Misc.init();
@@ -75,8 +75,8 @@ public class TestJQueryPatterns {
         Misc.run(new String[]{"test/jquery-patterns/jquery-1.11_extend.js", "test/jquery-patterns/jquery-1.11_extend_deepExtend.js"}, monitor);
     }
 
-    //hangs
-    @Ignore
+    //hangs // Picker & Maldonado
+    @Ignore // Picker & Maldonado
     @Test
     public void jQuery11_each() {
         Misc.init();

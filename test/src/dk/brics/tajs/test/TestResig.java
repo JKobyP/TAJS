@@ -35,7 +35,7 @@ public class TestResig {
 		Misc.checkSystemOutput();
 	}
 
-	//hangs
+	//hangs // Picker & Maldonado
 	@Ignore
 	@Test
 	public void resig_ejohn13() throws Exception {
@@ -46,7 +46,7 @@ public class TestResig {
 		Misc.checkSystemOutput();
 	}
 
-	//hangs
+	//hangs // Picker & Maldonado
 	@Ignore
 	@Test
 	public void resig_ejohn14() throws Exception { 
@@ -57,7 +57,7 @@ public class TestResig {
 		Misc.checkSystemOutput();
 	}
 
-	//hangs
+	//hangs // Picker & Maldonado // Picker & Maldonado
 	@Ignore
 	@Test
 	public void resig_ejohn15() throws Exception { 
@@ -454,7 +454,7 @@ public class TestResig {
 		Misc.checkSystemOutput();
 	}
 
-	//hangs
+	//hangs // Picker & Maldonado
 	@Ignore
 	@Test
 	public void resig_ejohn80() throws Exception {
@@ -465,7 +465,7 @@ public class TestResig {
 		Misc.checkSystemOutput();
 	}
 
-	//hangs
+	//hangs // Picker & Maldonado
 	@Ignore
 	@Test
 	public void resig_ejohn80b() throws Exception { 
@@ -534,7 +534,7 @@ public class TestResig {
 		Misc.checkSystemOutput();
 	}
 
-	//hangs
+	//hangs // Picker & Maldonado
 	@Ignore
 	@Test
 	public void resig_ejohn90() throws Exception {

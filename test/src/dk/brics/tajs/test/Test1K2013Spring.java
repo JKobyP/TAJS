@@ -191,7 +191,7 @@ public class Test1K2013Spring {
         Misc.checkSystemOutput();
     }
 
-    //Hangs
+    //Hangs // Picker & Maldonado
     @Ignore
     @Test
     public void test1k_2013_spring_1377() {
@@ -292,8 +292,8 @@ public class Test1K2013Spring {
         Misc.checkSystemOutput();
     }
 
-    //hangs
-    @Ignore
+    //hangs // Picker & Maldonado
+    @Ignore // Picker & Maldonado
     @Test
     public void test1k_2013_spring_1420() {
         Misc.init();
@@ -312,8 +312,8 @@ public class Test1K2013Spring {
         Misc.checkSystemOutput();
     }
 
-    //hangs
-    @Ignore
+    //hangs // Picker & Maldonado
+    @Ignore // Picker & Maldonado
     @Test(expected = AnalysisLimitationException.class /* eval precision */)
     public void test1k_2013_spring_1423() {
         Misc.init();

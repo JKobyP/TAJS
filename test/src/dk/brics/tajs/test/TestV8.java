@@ -38,7 +38,7 @@ public class TestV8 { // TODO: check expected output for TestV8
 		Misc.checkSystemOutput();
 	}
 
-	//hangs
+	//hangs // Picker & Maldonado
 	@Ignore
 	@Test
 	public void testV8_apply() throws Exception
@@ -175,7 +175,7 @@ public class TestV8 { // TODO: check expected output for TestV8
 		Misc.checkSystemOutput();
 	}
 
-	//hangs
+	//hangs // Picker & Maldonado
 	@Ignore
 	@Test
 	public void testV8_array_splice() throws Exception
@@ -746,7 +746,7 @@ public class TestV8 { // TODO: check expected output for TestV8
 		Misc.checkSystemOutput();
 	}
 
-	//hangs
+	//hangs // Picker & Maldonado
 	@Ignore
 	@Test
 	public void testV8_delete() throws Exception
@@ -947,7 +947,7 @@ public class TestV8 { // TODO: check expected output for TestV8
 		Misc.checkSystemOutput();
 	}
 
-	//hangs
+	//hangs // Picker & Maldonado
 	@Ignore
 	@Test
 	public void testV8_function_names() throws Exception
@@ -1004,7 +1004,7 @@ public class TestV8 { // TODO: check expected output for TestV8
 		Misc.checkSystemOutput();
 	}
 
-	// hangs
+	// hangs // Picker & Maldonado
 	@Ignore
 	@Test
 	public void testV8_fuzz_accessors() throws Exception
@@ -1102,7 +1102,7 @@ public class TestV8 { // TODO: check expected output for TestV8
 		Misc.checkSystemOutput();
 	}
 
-	//hangs
+	//hangs // Picker & Maldonado
 	@Ignore
 	@Test
 	public void testV8_html_string_funcs() throws Exception
@@ -1124,7 +1124,7 @@ public class TestV8 { // TODO: check expected output for TestV8
 		Misc.checkSystemOutput();
 	}
 
-	//hangs
+	//hangs // Picker & Maldonado
 	@Ignore
 	@Test
 	public void testV8_in() throws Exception
@@ -1692,7 +1692,7 @@ public class TestV8 { // TODO: check expected output for TestV8
 		Misc.checkSystemOutput();
 	}
 
-	//hangs
+	//hangs // Picker & Maldonado
 	@Ignore
 	@Test
 	public void testV8_sparse_array_reverse() throws Exception
@@ -1937,7 +1937,7 @@ public class TestV8 { // TODO: check expected output for TestV8
 		Misc.checkSystemOutput();
 	}
 
-	//hangs
+	//hangs // Picker & Maldonado
 	@Ignore
 	@Test
 	public void testV8_touint32() throws Exception
@@ -1980,7 +1980,7 @@ public class TestV8 { // TODO: check expected output for TestV8
 		Misc.checkSystemOutput();
 	}
 
-	//hangs
+	//hangs // Picker & Maldonado
 	@Ignore
 	@Test
 	public void testV8_unicode_string_to_number() throws Exception
@@ -1992,7 +1992,7 @@ public class TestV8 { // TODO: check expected output for TestV8
 		Misc.checkSystemOutput();
 	}
 
-	// Hangs and out of memory
+	// Hangs and out of memory // Picker & Maldonado
 	@Ignore
 	@Test
 	public void testV8_unicode_test() throws Exception
