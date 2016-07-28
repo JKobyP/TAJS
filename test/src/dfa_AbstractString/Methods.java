@@ -1,5 +1,6 @@
-package edu.oakland.stringabs;
+package dfa_AbstractString;
 
+import edu.oakland.stringabs.*;
 import dk.brics.automaton.Automaton;
 import org.junit.Test;
 
@@ -26,7 +27,7 @@ public class Methods {
     @Test
     public void isEmpty_test() {
         AbstractString empty = AbstractString.newEmptyAbstractString();
-        AbstractString full = AbstractString.anyString();
+        AbstractString full = AbstractString.getAnyString();
 
         assertEquals(true, empty.isEmpty());
         assertEquals(false, full.isEmpty());
@@ -96,9 +97,9 @@ public class Methods {
     @Test
     public void isMaybeAnyStr_test() {
         AbstractString a = new AbstractString("yes");
-        AbstractString any = AbstractString.anyString();
+        AbstractString any = AbstractString.getAnyString();
 
-        assertEquals(true, any.equals(AbstractString.anyString()));
+        assertEquals(true, any.equals(AbstractString.getAnyString()));
     }
 
     @Test
