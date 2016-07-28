@@ -31,7 +31,7 @@ public class WriteVariableNode extends Node {
     private String varname;
 
     private int value_reg;
-    public int visit_count;
+    public int visit_count; // Picker & Maldonado
 
     /**
      * Constructs a new write variable node.
@@ -70,7 +70,7 @@ public class WriteVariableNode extends Node {
 
     @Override
     public void visitBy(NodeVisitor v) {
-        visit_count++;
+        visit_count++; // Picker & Maldonado
         v.visit(this);
     }
 

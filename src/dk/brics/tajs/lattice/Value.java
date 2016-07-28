@@ -185,12 +185,12 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     /**
      * Constant string or prefix.
      */
-    private AbstractString str;
+    private AbstractString str; // Picker & Maldonado
 
     /**
      * Counts how many times the Str facet has been 'joined'
      */
-    public int joinCount;
+    public int joinCount; // Picker & Maldonado
 
     /**
      * Property reference for polymorphic value.
@@ -249,7 +249,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         flags = 0;
         num = null;
         str = null;
-        joinCount = 0;
+        joinCount = 0; // Picker & Maldonado
         object_labels = null;
         var = null;
         hashcode = 0;
@@ -262,7 +262,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         flags = v.flags;
         num = v.num;
         str = v.str;
-        joinCount = v.joinCount;
+        joinCount = v.joinCount; // Picker & Maldonado
         object_labels = v.object_labels;
         var = v.var;
         hashcode = v.hashcode;
@@ -1002,7 +1002,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                 }
             } // otherwise, neither is a single number, so do nothing
             // strings
-            modified |= joinCount < 4 && v.joinCount < 4 ? joinAbstractStringWithLub(v) : joinSingleStringWithWiden(v);
+            modified |= joinCount < 4 && v.joinCount < 4 ? joinAbstractStringWithLub(v) : joinSingleStringWithWiden(v); // Picker & Maldonado
 //            joinCount =  ? joinCount : v.joinCount;
             // objects
             if (v.object_labels != null) {
@@ -1206,7 +1206,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
                     any = true;
                 }
             }
-            if (isMaybeAnyStr()) {
+            if (isMaybeAnyStr()) { // Picker & Maldonado
                 if (any)
                     b.append('|');
                 b.append("Str");
@@ -1598,7 +1598,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     public Value restrictToTruthy() {
         checkNotPolymorphicOrUnknown();
         Value r = new Value(this);
-        if (r.str != null && r.str.hasIntersection(AbstractString.getEmptyString()))
+        if (r.str != null && r.str.hasIntersection(AbstractString.getEmptyString())) // Picker & Maldonado
             r.str = r.str.intersect(AbstractString.getEmptyString().complement());
         if (r.num != null && Math.abs(r.num) == 0.0)
             r.num = null;
@@ -1612,7 +1612,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
     public Value restrictToFalsy() {
         checkNotPolymorphicOrUnknown();
         Value r = new Value(this);
-        if (r.str != null) //TODO : make this more precise
+        if (r.str != null) //TODO : make this more precise // Picker & Maldonado
             r.str = null;
         if (r.num != null && Math.abs(r.num) != 0.0)
             r.num = null;
@@ -1942,7 +1942,7 @@ public final class Value implements Undef, Null, Bool, Num, Str {
         return canonicalize(r);
     }
 
-    /* the Str facet */
+    /* the Str facet */ // Picker & Maldonado BASICALLY THIS ENTIRE FACET
     @Override
     public boolean isMaybeAnyStr() {
         checkNotPolymorphicOrUnknown();

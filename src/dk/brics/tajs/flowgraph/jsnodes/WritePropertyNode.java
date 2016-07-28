@@ -39,7 +39,7 @@ public class WritePropertyNode extends Node {
 
     private int value_reg;
 
-    public int visitCount;
+    public int visitCount; // Picker & Maldonado // Picker & Maldonado
 
     /**
      * Constructs a new write property node with variable property name.
@@ -136,7 +136,7 @@ public class WritePropertyNode extends Node {
 
     @Override
     public void visitBy(NodeVisitor v) {
-        visitCount++;
+        visitCount++; // Picker & Maldonado
         v.visit(this);
     }
 

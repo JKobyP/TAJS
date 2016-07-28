@@ -374,7 +374,7 @@ public class NodeTransfer implements NodeVisitor {
     @Override
     public void visit(WriteVariableNode n) {
         Value v = c.getState().readRegister(n.getValueRegister());
-        v.joinCount = n.visit_count;
+        v.joinCount = n.visit_count; // Picker & Maldonado
         Set<ObjectLabel> objs = pv.writeVariable(n.getVariableName(), v, true);
         Function f = n.getBlock().getFunction();
         if (f.getParameterNames().contains(n.getVariableName())) { // TODO: review

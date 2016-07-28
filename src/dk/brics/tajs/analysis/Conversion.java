@@ -355,7 +355,7 @@ public class Conversion {
                     result = result.joinBool(false);
                 else
                     result = result.joinBool(true);
-            } else if (v.getAbstractStr().run(""))
+            } else if (v.getAbstractStr().run("")) // Picker & Maldonado
                 result = result.joinAnyBool();
             else
                 result = result.joinBool(true);
@@ -423,13 +423,13 @@ public class Conversion {
                 else
                     v = Value.makeNumNaN();
             }
-        } else {
+        } else { // Picker & Maldonado
             if (str.getAbstractStr() != null && str.getAbstractStr().isSubset(AbstractString.uIntString())) {
                 v = Value.makeAnyNumUInt();
             } else if (str.getAbstractStr() != null && str.getAbstractStr().isSubset(AbstractString.otherNumString())) {
                 v = Value.makeAnyNumOther().joinNumNaN().joinNumInf();
             } else if (str.getAbstractStr() != null && str.getAbstractStr().isSubset(AbstractString.getIdentifierPartsString())) {
-              v = Value.makeNumNaN();
+              v = Value.makeNumNaN(); // Picker & Maldonado
             } else if (str.getAbstractStr() == null || str.getAbstractStr().isEmpty()){
                 v = Value.makeNone();
             } else {
@@ -516,7 +516,7 @@ public class Conversion {
             // If the argument is true, then the result is "true".
             // If the argument is false, then the result is "false".
             if (v.isMaybeAnyBool())
-                result = result.joinStr("true").joinStr("false"); // join of "true" and "false"
+                result = result.joinStr("true").joinStr("false"); // join of "true" and "false" // Picker & Maldonado
             else if (v.isMaybeTrueButNotFalse())
                 result = result.joinStr("true");
             else

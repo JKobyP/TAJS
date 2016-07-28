@@ -282,7 +282,7 @@ public class Operators {
     /**
      * Concatenates two strings, joins that value to r
      */
-    private static Value addStrings(Str s1, Str s2, Value r) {
+    private static Value addStrings(Str s1, Str s2, Value r) { // Picker & Maldonado
         if(s1.isNotStr() || s2.isNotStr())
             return r;
         r = s1.strConcatenate(s2,r);
@@ -581,7 +581,7 @@ public class Operators {
             }
             if (!v2.isNotStr()) {
                 if (v1.isMaybeFuzzyStr() || v2.isMaybeFuzzyStr()) {
-                    if (v1.getAbstractStr().hasIntersection(v2.getAbstractStr()))
+                    if (v1.getAbstractStr().hasIntersection(v2.getAbstractStr())) // Picker & Maldonado
                         r = Value.makeAnyBool();
                     else
                         r = r.joinBool(false);
@@ -768,7 +768,7 @@ public class Operators {
                 r = r.joinBool(false);
             if (!v2.isNotStr()) {
                 if (v1.isMaybeFuzzyStr() || v2.isMaybeFuzzyStr()) {
-                    if (v1.getAbstractStr().hasIntersection(v2.getAbstractStr()))
+                    if (v1.getAbstractStr().hasIntersection(v2.getAbstractStr())) // Picker & Maldonado
                         r = Value.makeAnyBool();
                     else
                         r = r.joinBool(false);

@@ -176,6 +176,6 @@ public interface Str {
     /**
      * Gets the AbstractString object this value holds
      */
-    AbstractString getAbstractStr();
-    Value strConcatenate(Str s, Str s2);
+    AbstractString getAbstractStr(); // Picker & Maldonado
+    Value strConcatenate(Str s, Str s2); // Picker & Maldonado
 }

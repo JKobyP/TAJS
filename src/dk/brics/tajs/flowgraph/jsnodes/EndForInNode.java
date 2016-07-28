@@ -26,7 +26,7 @@ import dk.brics.tajs.util.AnalysisException;
  * Must be the only node in its block.
  */
 public class EndForInNode extends Node {
-    public int visitCount;
+    public int visitCount; // Picker & Maldonado
     /**
      * Begin node for this block.
      */
@@ -72,7 +72,7 @@ public class EndForInNode extends Node {
 
     @Override
     public void visitBy(NodeVisitor v) {
-        visitCount++;
+        visitCount++; // Picker & Maldonado
         v.visit(this);
     }
 }

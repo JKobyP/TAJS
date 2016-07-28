@@ -8,6 +8,7 @@ import dk.brics.tajs.flowgraph.SourceLocation;
  * Placed at every exit of the loop (for example, immediately after the false branch).
  */
 public class EndLoopNode extends Node {
+
     private final BeginLoopNode beginNode;
 
     /**

@@ -29,7 +29,7 @@ import dk.brics.tajs.flowgraph.SourceLocation;
 public class ReturnNode extends Node {
 
     private int value_reg;
-    public int visitCount;
+    public int visitCount; // Picker & Maldonado
 
     /**
      * Constructs a new return node.
@@ -62,7 +62,7 @@ public class ReturnNode extends Node {
 
     @Override
     public void visitBy(NodeVisitor v) {
-        visitCount++;
+        visitCount++; // Picker & Maldonado
         v.visit(this);
     }
 
