@@ -709,6 +709,8 @@ public class TestMicro {
         Misc.checkSystemOutput();
     }
 
+	// Picker & Maldonado
+	@Ignore
 	@Test
 	public void micro_74() throws Exception {
 		Misc.init();
