@@ -54,11 +54,11 @@ import static dk.brics.tajs.util.Collections.newList;
 /**
  * Main class for the TAJS program analysis.
  */
-public class Main {
+public class MainOriginal {
 
     private static Logger log = Logger.getLogger(Main.class);
 
-    private Main() {
+    private MainOriginal() {
     }
 
     /**
