@@ -274,7 +274,6 @@ public class AbstractString implements AbstractOperations {
 
                 return b.toString();
             } else {
-                System.out.println(dfa);
                 return "[Many possible strings (" + dfa.getNumberOfStates()+ " states), such as \"" + dfa.getShortestExample(true) + "\"]";
             }
         }

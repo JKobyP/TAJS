@@ -84,7 +84,7 @@ public class Main {
         /**
          * CHANGE THE PATH BELOW TO WHICHEVER FILE YOU WANT TO TEST
          */
-        String path = "C:/Users/reu-5/dev/repo/TAJS/test/koby/test.js";
+        String path = "C:\\Users\\reu-9\\Documents\\chris\\TAJS\\test\\chris\\test1.js";
         /**
          * ADD COMMAND LINE OPTIONS TO THE ARRAY BELOW (IF DESIRED)
          */
