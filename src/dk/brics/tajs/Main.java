@@ -54,6 +54,7 @@ import org.apache.tools.ant.filters.StringInputStream;
 
 /**
  * Main class for the TAJS program analysis.
+ * @Modifications thanks to KasdL
  */
 public class Main {
 
@@ -80,8 +81,13 @@ public class Main {
         String uneval = "-uneval"; // enable the Unevalizer for on-the-fly translation of `eval` calls, as described in
                                     // 'Remedying the Eval that Men Do', ISSTA 2012
         String determinacy = "-determinacy"; // enable the techniques described in 'Determinacy in Static Analysis of jQuery', OOPSLA 2014
-        //***************** file path
+        /**
+         * CHANGE THE PATH BELOW TO WHICHEVER FILE YOU WANT TO TEST
+         */
         String path = "C:/Users/reu-5/dev/repo/TAJS/test/koby/test.js";
+        /**
+         * ADD COMMAND LINE OPTIONS TO THE ARRAY BELOW (IF DESIRED)
+         */
         String[] file = {path,
                 //"-statistics",
                 collect_variable_info,
@@ -101,14 +107,6 @@ public class Main {
             if (a == null)
                 System.exit(-1);
             run(a);
-
-            // Kasdl -- test The analysis ***********************************************************************************************************>>>>>>>>
-            //testAnalysis(a);
-
-            //ToInterval intervale = new ToInterval();
-           // String res = intervale.printList();
-           // System.out.println("^^^^^^^^^^^^^^^^^^^^\n\n\n" + res);
-           // ToInterval.make();
 
             System.exit(0);
         } catch (AnalysisException e) {
@@ -151,20 +149,10 @@ public class Main {
      * @throws AnalysisException if internal error
      */
     public static Analysis init(String[] args, IAnalysisMonitoring monitoring, SolverSynchronizer sync) throws AnalysisException {
-//        System.out.println("=========== KasdL ===========");
-//        for (int index = 0; index < args.length; ++index)
-//		        {
-//		            System.out.println("args[" + index + "]: " + args[index]);
-//		        }
-
 		boolean show_usage = false;
         Options.parse(args);
         Options.get().checkConsistency();
         List<String> files = Options.get().getArguments();
-
-//        "=========== KasdL ==========="
-//        System.out.println(Options.get().getArguments());
-//        System.exit(0);
 
         Analysis analysis = new Analysis(monitoring, sync);
 
@@ -224,11 +212,6 @@ public class Main {
                 }
             }
             fg = builder.close();
-            //********** @ this point FlowGraph is built kasdl*************
-
-            //************ kasdl - testing the fg
-            //test(fg);
-            // **********************
 
         } catch (IOException e) {
             log.error("Unable to parse " + e.getMessage());
@@ -345,87 +328,4 @@ public class Main {
                 throw new RuntimeException("Unhandled phase enum: " + phase);
         }
     }
-
-
-//    // Kasdl -- My Functions  ***********************************************************************************************************>>>>>>>>
-//
-//    /**
-//     * TO test the analysis object.
-//     * @param m the Analysis Object
-//     * @throws FileNotFoundException
-//     * @throws UnsupportedEncodingException
-//     */
-//    private static void testAnalysis(Analysis m) throws FileNotFoundException, UnsupportedEncodingException {
-//
-//        IAnalysisMonitoring f = m.getMonitoring();
-//        monitoringTest(f);
-//
-//        FlowGraph fg = m.getSolver().getFlowGraph();
-//        flowGraphTest(fg);
-//
-//        Map<TypeCollector.VariableSummary, Value> ia = f.getTypeInformation(); // Map variable --> value
-//        printTheMap(ia);
-//
-//        //System.exit(0);
-//    }
-//
-//    /**
-//     * to print out the partial map - var -> value
-//     * @param vs the variable map
-//     */
-//    private static void printTheMap(Map<TypeCollector.VariableSummary, Value> vs) {
-//
-//        System.out.println("\nPrint out the Monitoring Map : ");
-//
-//        for (Map.Entry<TypeCollector.VariableSummary, Value> entry : vs.entrySet()) {
-//            String key = entry.getKey().getVariableName();
-//            Value value = entry.getValue();
-//            System.out.println();
-//            System.out.println("key : " + key + "\n" + "value : " + value);
-//            //System.out.println("prefix    : " +value.isMaybeSingleNum());
-//        }
-//    }
-//
-//    /**
-//     * To print out the flow graph and all the functions, blocks
-//     * ,and the abstract nodes
-//     * @param fg FlowGraph
-//     */
-//    private static void flowGraphTest(FlowGraph fg) {
-//        Set<String> FunVarName;
-//        System.out.println("+++++++++++++++++++++++++++++++++");
-//        System.out.println("Print the fg From Main:\n"+fg);
-//        System.out.println("+++++++++++++++++++++++++++++++++");
-//
-//        for (Function fun : fg.getFunctions()) {
-//            FunVarName = fun.getVariableNames();
-//            for(String varnam : FunVarName)
-//                System.out.println("varnam    : " + varnam);
-//            //System.out.println(fun.getSourceLocation().getLineNumber());
-//            System.out.println("\nFunction : " + fun.getName());
-//            for (BasicBlock b : fun.getBlocks()) {
-//                for (AbstractNode an : b.getNodes()) {
-//                    //System.out.println(an.getClass());
-//                    System.out.println("AbstractNode : " + an.toString());
-//                }
-//                System.out.println("---------" );// end of block
-//            }
-//            System.out.println("+++++++++++ End of Function" );// end of function
-//
-//        }
-//    }
-//
-//    /**
-//     * To print out the messages
-//     * @param m IAnalysisMonitoring object
-//     */
-//    public static void monitoringTest(IAnalysisMonitoring m){
-//        System.out.println("\n+++++++++++++++++++++++++++++++++");
-//        System.out.println("Print the Monitoring From Main:");
-//        System.out.println("+++++++++++++++++++++++++++++++++");
-//        System.out.println("\nPrint out the Monitoring messages : ");
-//        for(Message message  : m.getMessages()){
-//            System.out.println(message.getMessage());
-//        }
-//    }
 }
